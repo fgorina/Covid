@@ -7,9 +7,16 @@ public func configure(_ app: Application) throws {
     // uncomment to serve files from /Public folder
     // app.middleware.use(FileMiddleware(publicDirectory: app.directory.publicDirectory))
 
-    app.http.server.configuration.hostname = Environment.get("app.http.server.configuration.hostname") ?? "192.168.1.21"
-    app.http.server.configuration.port =  Int(Environment.get("app.http.server.configuration.port") ?? "8080") ?? 8080
+    
+    if app.environment.isRelease {
+           app.http.server.configuration.hostname = "185.228.173.50"
+           app.http.server.configuration.port = 80
+    } else {
+        app.http.server.configuration.hostname = Environment.get("app.http.server.configuration.hostname") ?? "192.168.1.21"
+        app.http.server.configuration.port =  Int(Environment.get("app.http.server.configuration.port") ?? "8080") ?? 8080
+    }
 
+ 
     
     app.middleware.use(FileMiddleware(publicDirectory: app.directory.publicDirectory))
     app.views.use(.leaf)
