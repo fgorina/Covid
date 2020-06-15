@@ -246,17 +246,17 @@ struct CovidController: RouteCollection {
                         
                         var counter = 0
                         
-                        for i in 0..<records.count {
+                        for ix in 0..<records.count {
                             
-                            if records[i].cases >= 1.0 {
+                            if records[ix].cases >= 1.0 {
                                 counter += 1
                             }
                             
-                            if (i < delta || i > records.count - delta) || counter < delta {
+                            if (ix < delta || ix > records.count - delta) || counter < delta {
                                 movingBeta.append(nil)
                             } else {
                                 
-                                var (_, mbeta) = self.regression(Array(records[i-delta..<i+delta]))
+                                var (_, mbeta) = self.regression(Array(records[(ix-delta)..<(ix+delta)]))
                                 
                                 if mbeta.isNaN {
                                     movingBeta.append(nil)
@@ -298,38 +298,38 @@ struct CovidController: RouteCollection {
         var i = 0.0
         var acum = 0.0
         
-        let lnCases = data.reduce([]) { (prev : [(x:Double, y:Double)], point : Covid19Model) -> [(x:Double, y:Double)] in
-            if point.cases > 0.0   {// Unfortunately there are
+        let lnCases = data.compactMap { (point) -> (x: Double, y: Double)? in
+            if  point.cases > 0.0{// Unfortunately there are
+                i+=1
                 acum += point.cases
-                var aux = prev
-                aux.append((x:i, y:log(acum)))
-                i += 1
-                return aux
+                return (x:i-1, y: log(point.cases))
             }else {
                 i += 1
-
-                return prev
+                return nil
             }
         }
         
         // Compute averages
         
+        if lnCases[0].y > lnCases.last!.y {
+            print("xx")
+        }
         let n = Double(lnCases.count)
         
-        let xAvg = lnCases.reduce(0.0){$0 + $1.x} / Double(lnCases.count)
-        let yAvg = lnCases.reduce(0.0){$0 + $1.y} / Double(lnCases.count)
-        
-        let Σxy = lnCases.reduce(0.0){$0 + ($1.x * $1.y)}
+         let Σxy = lnCases.reduce(0.0){$0 + ($1.x * $1.y)}
         let Σx = lnCases.reduce(0.0){$0 + ($1.x)}
         let Σy = lnCases.reduce(0.0){$0 + ($1.y)}
         let Σx2 = lnCases.reduce(0.0){$0 + ($1.x * $1.x)}
-        
-        let β = (Σxy - Σx * yAvg - Σy * xAvg + n * xAvg * yAvg) / (Σx2 + n * xAvg * xAvg - xAvg * 2 * Σx)
-        let 𝛼 = yAvg - β * xAvg
+        let Σy2 = lnCases.reduce(0.0){$0 + ($1.y * $1.y)}
+
+        let β = (n * Σxy -  Σx * Σy) / (n * Σx2 - Σx * Σx)
+        let 𝛼 = (Σy - β * Σx) / n
+        //let β =  (Σxy - Σx * yAvg - Σy * xAvg + n * xAvg * yAvg) / (Σx2 + n * xAvg * xAvg - xAvg * 2 * Σx)
+        //let  yAvg - β * xAvg
         
         // Beta es exactament la mateixa integrat que sense integrar!!!
         // alfa sense integrar es alfa integrat * beta
-        return (exp(𝛼) * β, β)
+        return (exp(𝛼), β)
     }
     
 }

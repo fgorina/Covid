@@ -127,7 +127,6 @@
                             position: 'right',
                             stacked: false,
                             ticks: {
-                                min: 0,
                                  beginAtZero: true
                             }
                         }]
@@ -215,7 +214,6 @@
                             position: 'right',
                             stacked: false,
                             ticks: {
-                                min: 0,
                                 beginAtZero: true
                             }
                         }]
