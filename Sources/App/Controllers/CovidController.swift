@@ -160,8 +160,8 @@ struct CovidController: RouteCollection {
                                         deaths += records[j].deaths
                                     }
                                     
-                                    records[i].cases = cases / ((2.0 * Double(filter)) + 1.0)
-                                    records[i].deaths = deaths / ((2.0 * Double(filter))  + 1.0)
+                                    records[i].cases = cases / ((2.0 * Double(filter)) )
+                                    records[i].deaths = deaths / ((2.0 * Double(filter)))
 
                                 }
                             }
