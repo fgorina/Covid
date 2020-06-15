@@ -4,7 +4,7 @@
         <meta charset="utf-8">
         <meta name="viewport" content="width=device-width, initial-scale=1">
         <meta name="robots" content="noindex">
-        <link rel="stylesheet" href="/css/MAIN.css">
+        <link rel="stylesheet" href="/css/main.css">
                         
         <script src="/chartjs/Chart.bundle.js"></script>
         <script src="/javascript/jquery-3.5.1.js"></script>
