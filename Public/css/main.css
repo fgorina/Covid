@@ -1,0 +1,119 @@
+body {
+    background: #1D1F20;
+    padding: 16px;
+}
+
+canvas {
+    border: 1px dotted red;
+}
+
+div{
+    display: block;
+    
+}
+.chart-container {
+    position: relative;
+    margin: auto;
+    height: 60vh;
+    width: 90vh;
+
+}
+
+.flatButton{
+    display: inline;
+    color: #2B7DF6;
+    
+}
+.flatButton:hover {
+    cursor: pointer;
+}
+
+.opener {
+
+    display: flex;
+    align-items: center;
+    vertical-align: baseline;
+}
+
+.spacer{
+    flex-grow: 1;
+}
+
+H1 {
+    text-align: center;
+    color: whitesmoke;
+}
+
+H2 {
+    color: whitesmoke;
+}
+
+a {
+    color: #2B7DF6;
+    text-decoration: none;
+}
+
+
+form {
+    text-align: center;
+}
+
+header {
+    text-align: center;
+    padding: 16px;
+}
+
+.footer {
+    text-align: center;
+    padding: 16px;
+    font-size: 10px;
+    
+}
+
+.subtitle {
+    text-align: center;
+    font-size: 10px;
+    
+}
+
+
+header img {
+    width: 64px;
+}
+
+header nav {
+    margin-top: 16px;
+    margin-bottom: 16px;
+}
+
+
+body {
+    color: whitesmoke;
+    font-family: -apple-system, system-ui, BlinkMacSystemFont, "Helvetica", "Segoe UI",
+    Roboto, Ubuntu;
+    font-size: 16px;
+    line-height: 1.5em;
+
+}
+
+main {
+    margin-top: 16px;
+}
+
+.wrapper {
+    margin: 16px auto;
+    max-width: 950px;
+}
+
+form .smallField {
+    display: inline;
+    width: 80px;
+}
+
+form input[type=date]{
+    width: 100px;
+}
+
+.inline {
+    display: inline;
+}

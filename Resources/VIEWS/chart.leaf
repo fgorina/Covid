@@ -1,0 +1,108 @@
+#extend("index"):
+#export("body"):
+    <script type="text/javascript">
+        
+        var myChart
+        
+        function buildResumChart(list){
+            var labels = []
+            var cases = []
+            var deaths = []
+            var i = 0
+            list.forEach(function(value, index){
+                if (index <= 10 && value.population != 0){
+                    labels.push(value.description)
+                    cases.push(Math.round(value.cases/value.population*1000000.0))
+                    deaths.push(Math.round(value.deaths/value.population*1000000.0))
+                    }
+                })
+                   
+            var ctx = $('\#myChart')[0];
+            myChart = new Chart(ctx, {
+            type: 'bar',
+            onClick: function(ctx, event){
+                alert('Hello')
+            },
+            data: {
+                labels: labels,
+                datasets: [{
+                    label: 'Casos/1Mh',
+                    data: cases,
+                    borderWidth: 1,
+                    backgroundColor: '\#00ff0044'
+                },
+                           {
+                    label: 'Morts/1Mh',
+                    data: deaths,
+                    borderWidth: 1,
+                    backgroundColor: '\#ff000099'
+                },
+                           
+                           ]
+            },
+            options: {
+                maintainAspectRatio: false,
+                events: ['click'],
+                scales: {
+                    xAxes: [{
+                        stacked: true,
+                    }],
+                    yAxes: [{
+                        stacked: true,
+                        ticks: {
+                            beginAtZero: true
+                        }
+                    }]
+                }
+            }
+        });
+    }
+                   
+                   
+                   
+    $(document).ready(function() {
+            
+            var jqxhr =
+            $.ajax({
+                type: "GET",
+                cache: false,
+                dataType: "json",
+                url: "/covid/resum",
+            })
+            .done(function (data) {
+                let list = data.list
+                buildResumChart(list)
+                
+            })
+            
+            .fail(function (jqXHR, textStatus, errorThrown) {
+                
+                if (errorThrown != "abort") { // Abort fails silently :)
+                    alert("Error at lookup" + textStatus + " " + errorThrown);
+                }
+                
+            })
+            .always(function () {
+                $('body').removeClass('waiting');
+            });
+            
+            document.getElementById("myChart").onclick = function (evt) {
+                var activePoints = myChart.getElementsAtEventForMode(evt, 'point', myChart.options);
+                var firstPoint = activePoints[0];
+                var label = myChart.data.labels[firstPoint._index];
+                var value = myChart.data.datasets[firstPoint._datasetIndex].data[firstPoint._index];
+                //alert(label + ": " + value);
+                
+            };
+        }
+    );
+    </script>
+
+        <H1>Països amb mes morts/habitant</H1>
+        <div class="subtitle">(en morts/1.000.000 h.)</div>
+        
+        <div class="chart-container">
+            <canvas id="myChart"></canvas>
+        </div>
+     #endexport
+#endextend

@@ -1,5 +1,6 @@
 import Fluent
 import Vapor
+import Leaf
 
 func routes(_ app: Application) throws {
     app.get { req in
@@ -10,5 +11,5 @@ func routes(_ app: Application) throws {
         return "Hello, world!"
     }
 
-    try app.register(collection: TodoController())
+    try app.register(collection: CovidController())
 }

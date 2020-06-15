@@ -1,0 +1,40 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <meta charset="utf-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1">
+        <meta name="robots" content="noindex">
+        <link rel="stylesheet" href="/css/MAIN.css">
+                        
+        <script src="/chartjs/Chart.bundle.js"></script>
+        <script src="/javascript/jquery-3.5.1.js"></script>
+        <script src="/javascript/utilities.js"></script>
+
+        <title>#(title)</title>
+    </head>
+    <body>
+        <header>
+        <a href="/" id="logo">
+            <img src="/images/logo.png">
+                <h1>𝛼 * exp(𝛽 * t)</h1>
+        </a>
+            <nav id="navigation">
+                <a href="/covid">Galeria Infame</a> &middot;
+                <a href="/covid/detail">Analitzador</a> 
+
+            </nav>
+        </header>
+
+        <main>
+            <div id="main-content">
+                #import("body")
+            </div>
+        </main>
+        
+        <div class="footer">
+            Les dades s'actualitzen diàriament del <a href="https://www.ecdc.europa.eu/en/publications-data/download-todays-data-geographic-distribution-covid-19-cases-worldwide">European Centre for Disease Prevention and Control</a> i estàn subjectes a la <a href="https://www.ecdc.europa.eu/en/copyright">política de copyright del ECDC</a>.<br>
+            L'imatege del virus es de <a href="https://phil.cdc.gov/Details.aspx?pid=23312">CDC/ Alissa Eckert, MS; Dan Higgins, MAMS.</a>
+            
+        </div>
+    </body>
+</html>
