@@ -11,6 +11,7 @@ struct CovidController: RouteCollection {
         var to : String?
         var acumulat : Bool
         var filter : String?
+        var comparar : String?
     }
     
     struct ResumContent : Content {
@@ -34,7 +35,8 @@ struct CovidController: RouteCollection {
         var alfaForecast: Double
         var betaForecast: Double
         var movingBeta : [Double?]
-        var adjustEnd : [Double?]           // 10 últims dies
+        var comparar : [Double?]
+        var compararName : String?// 10 últims dies
     }
     
     func boot(routes: RoutesBuilder) throws {
@@ -65,7 +67,7 @@ struct CovidController: RouteCollection {
                     return aux
                 }
                 
-                return req.view.render("detail", DetailContent(geoid: codedCountries[0].geoId  , descripcio: codedCountries[0].descripcio.replacingOccurrences(of: "_", with: " "), list: [], adjusted: [], alfa: 0.0, beta:0.0, countries: codedCountries, forecast: [], alfaForecast: 0.0, betaForecast: 0.0, movingBeta: [],adjustEnd: []))
+                return req.view.render("detail", DetailContent(geoid: codedCountries[0].geoId  , descripcio: codedCountries[0].descripcio.replacingOccurrences(of: "_", with: " "), list: [], adjusted: [], alfa: 0.0, beta:0.0, countries: codedCountries, forecast: [], alfaForecast: 0.0, betaForecast: 0.0, movingBeta: [],comparar: []))
         }
     }
     
@@ -100,6 +102,11 @@ struct CovidController: RouteCollection {
         guard let geoId = data.geoid else {
             return req.eventLoop.makeFailedFuture(Abort(.badRequest))
         }
+        
+        guard let compararId = data.comparar else {
+            return req.eventLoop.makeFailedFuture(Abort(.badRequest))
+        }
+
         
         var from = Date.from(string: data.from ?? "") ?? Date.from(string: "01/01/20")!
         var to = Date.from(string: data.to ?? "") ?? Date()
@@ -165,7 +172,7 @@ struct CovidController: RouteCollection {
                         
                         var i = 0
                         
-                        let maximum = records.reduce(0.0){
+                        _ = records.reduce(0.0){
                             if $1.cases > $0 {
                                 iMax = i
                             }
@@ -299,7 +306,7 @@ struct CovidController: RouteCollection {
                                 movingBeta.append(nil)
                             } else {
                                 
-                                var (_, mbeta) = self.regression(Array(records[(ix-delta)..<(ix+delta)]))
+                                let (_, mbeta) = self.regression(Array(records[(ix-delta)..<(ix+delta)]))
                                 
                                 if mbeta.isNaN {
                                     movingBeta.append(nil)
@@ -309,24 +316,36 @@ struct CovidController: RouteCollection {
                             }
                         }
                         
-                        let (alfaEnd, betaEnd) = self.regression(Array(records[max(records.count-11, 0)..<records.count]))
-                        
-                        var adjEnd : [Double?] = []
-                        for i in 0..<records.count {
+                        return CountriesModel.query(on: req.db)
+                        .filter(\.$geoid == compararId)
+                        .first()
+                        .unwrap(or: Abort(.notFound))
+                        .flatMap{ country1 in
                             
-                            if i < records.count-11{
-                                adjEnd.append(nil)
-                            }else{
-                                let fi  = Double(i - (records.count-11))
-                                let v  = alfaEnd * exp(betaEnd * fi)
-                                adjEnd.append(v)
-                            }
-                            
+                            return Covid19Model.query(on: req.db)
+                                .filter(\.$country == country1.id!)
+                                .filter(\.$reportingDate >= from)
+                                .filter(\.$reportingDate <= to)
+                                .filter(\.$cases >= 0.0)
+                                .sort(\.$year)
+                                .sort(\.$month)
+                                .sort(\.$day)
+                                .all()
+                                .flatMap{ compararRecords in
+                                    
+                                    var comparar = compararRecords.map{ $0.cases }
+                                    
+                                    var acum = 0.0
+                                    if data.acumulat {
+                                        for i in 0..<comparar.count {
+                                            acum += comparar[i]
+                                            comparar[i] = acum
+                                        }
+                                    }
+                                    
+                                    return req.eventLoop.makeSucceededFuture(DetailContent(geoid: geoId, descripcio: country.description.replacingOccurrences(of: "_", with: " "), list: records, adjusted: adjusted, alfa: alfa, beta: beta, countries: [], forecast: forecast, alfaForecast: alfaForecast, betaForecast: betaForecast, movingBeta: movingBeta, comparar: comparar, compararName : country1.description))
+                             }
                         }
-                        
-                        
-                        
-                        return req.eventLoop.makeSucceededFuture(DetailContent(geoid: geoId, descripcio: country.description.replacingOccurrences(of: "_", with: " "), list: records, adjusted: adjusted, alfa: alfa, beta: beta, countries: [], forecast: forecast, alfaForecast: alfaForecast, betaForecast: betaForecast, movingBeta: movingBeta, adjustEnd: adjEnd))
                 }
         }
     }

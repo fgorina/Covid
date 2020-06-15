@@ -97,7 +97,17 @@
                             pointHitRadius: 3,
                            borderWidth: 1.0
                        },
-                                          
+                       {
+                         label: data.compararName,
+                         yAxisID: 'A',
+                         showLine: true,
+                        borderWidth : 1.0,
+                        pointRadius : 0,
+                         pointHitRadius: 3,
+                        data: data.comparar,
+                         borderColor: 'rgba(255, 0, 255, 1.0)',
+                       },
+
 
                     ]
                 },
@@ -186,6 +196,18 @@
 
 
                   },
+                 {
+                     label: data.compararName,
+                     yAxisID: 'A',
+                     showLine: true,
+                    borderWidth : 1.0,
+                    pointRadius : 0,
+                     pointHitRadius: 3,
+                    data: data.comparar,
+                     borderColor: 'rgba(255, 0, 255, 1.0)',
+                 },
+
+                                         
                 ]
                 
                 myChart.options = {
@@ -227,7 +249,7 @@
             
         }
     
-    function loadCountry(geoid, desde, hasta){
+    function loadCountry(geoid, comparar, desde, hasta){
         
         var acumulat = $("\#acumulatId").is(":checked")
         var filter = $("\#filterId").val()
@@ -236,7 +258,8 @@
             "from": desde,
             "to":hasta,
             "acumulat":acumulat,
-            "filter": filter
+            "filter": filter,
+            "comparar" : comparar,
         }
         var jqxhr =
         $.ajax({
@@ -273,12 +296,19 @@
         let geoid = $("\#paisosId").val()
         let desde = $("\#desdeId").val()
         let hasta = $("\#hastaId").val()
+        let comparar = $("\#paisos2Id").val()
 
-        loadCountry(geoid,desde, hasta)
+        loadCountry(geoid,comparar,desde, hasta)
         
     }
     $(document).ready(function() {
-        loadCountry("#(geoid)")
+        let geoid = $("\#paisosId").val()
+        let desde = $("\#desdeId").val()
+        let hasta = $("\#hastaId").val()
+        let comparar = $("\#paisos2Id").val()
+
+
+        loadCountry(geoid,comparar,desde, hasta)
         $("\#desdeId").change(function(){loadSelected()})
         $("\#hastaId").change(function(){loadSelected()})
         $("\#acumulatId").change(function(){loadSelected()})
@@ -326,8 +356,16 @@
         <b>Al</b>&nbsp;<input id="hastaId" name="to" type="date">
     </div>
         <div class="opener">
+    Comparar
+    <select name="paisos2" id="paisos2Id" onChange="loadSelected()">
+        #for(item in countries):
+            <option #if(item.geoId == geoid): selected="selected" #endif
+            value="#(item.geoId)" >#(item.descripcio)</option>
+        #endfor
+    </select>
+
        
-n = 𝛼 * exp(𝛽 * dia)<div class="spacer"> </div>𝛼:&nbsp;<div id="idAlfa" class="inline"></div>&nbsp;/&nbsp;𝛽:&nbsp;<div id="idBeta" class="inline"></div>
+    <div class="spacer"> </div>𝛼:&nbsp;<div id="idAlfa" class="inline"></div>&nbsp;/&nbsp;𝛽:&nbsp;<div id="idBeta" class="inline"></div>
         </div>
 
     </form>
