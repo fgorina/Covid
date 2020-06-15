@@ -26,11 +26,11 @@ struct CovidController: RouteCollection {
         var geoid : String
         var descripcio : String
         var list : [Covid19Model]
-        var adjusted : [Double]
+        var adjusted : [Double?]
         var alfa : Double
         var beta : Double
         var countries : [CountryId]
-        var forecast : [Double]
+        var forecast : [Double?]
         var alfaForecast: Double
         var betaForecast: Double
         var movingBeta : [Double?]
@@ -101,8 +101,14 @@ struct CovidController: RouteCollection {
             return req.eventLoop.makeFailedFuture(Abort(.badRequest))
         }
         
-        let from = Date.from(string: data.from ?? "") ?? Date.from(string: "01/01/20")!
-        let to = Date.from(string: data.to ?? "") ?? Date()
+        var from = Date.from(string: data.from ?? "") ?? Date.from(string: "01/01/20")!
+        var to = Date.from(string: data.to ?? "") ?? Date()
+        
+        if to < from {
+            let aux = to
+            to = from
+            from = aux
+        }
         
         
         var filter = 0
@@ -128,17 +134,11 @@ struct CovidController: RouteCollection {
                     .filter(\.$reportingDate >= from)
                     .filter(\.$reportingDate <= to)
                     .filter(\.$cases >= 0.0)
-                    .filter(\.$cases >= 0.0)
                     .sort(\.$year)
                     .sort(\.$month)
                     .sort(\.$day)
                     .all()
                     .flatMap{ records in
-                        
-                        // Removing < 0 values
-                        
-                        
-                        
                         
                         // filtering (computes moving average)
                         if filter > 0 {
@@ -176,6 +176,10 @@ struct CovidController: RouteCollection {
                             i += 1
                             return max($0, $1.cases)
                         }
+                        
+                        if i400 == 0{
+                            i400 = records.count-1
+                        }
                           
                         if data.acumulat {
                             
@@ -190,27 +194,66 @@ struct CovidController: RouteCollection {
                                 record.deaths = acumDeaths
                             }
                         }
-                        let adjustableRecords : [Covid19Model] = Array(records[0..<iMax])
+                         
+                        var acc = 0
+                        var start = 0
+                        
+                        for record in records {
+                            if record.cases > 0.0{
+                                acc += 1
+                                if acc > 3{
+                                     break
+                                }
+                            }else{
+                                acc = 0
+                            }
+                            start += 1
+                        }
+                        
+                        if start == records.count {
+                            start = 0
+                        }
+
+                        if i400 < start {
+                            i400 = min(start + 10, records.count-1)
+                        }
+                        if iMax < start {
+                            iMax = records.count-1
+                        }
+
+                        
+                        let adjustableRecords : [Covid19Model] = Array(records[start..<iMax])
                         var (alfa, beta) = self.regression(adjustableRecords)
                         
-                        var adjusted : [Double] = []
+                        var adjusted : [Double?] = []
                         if records.count > 0{
-                            for i in 1...records.count {
-                                let fi = Double(i-1)
-                                let v  = alfa * exp(beta * fi)
-                                adjusted.append(v)
+                            for i in 0..<records.count {
+                                if i < start {
+                                    adjusted.append(nil)
+                                }else {
+                                    let fi = Double(i-start)
+                                    let v  = alfa * exp(beta * fi)
+                                    adjusted.append(v)
+                                }
                             }
                         }
                         
-                        let gouvRecords : [Covid19Model] = Array(records[0..<i400])
+                        // Remove origining records till first 3 consecutive non zero values
+                        
+                        
+                        let gouvRecords : [Covid19Model] = Array(records[start..<i400])
                         var (alfaForecast, betaForecast) = self.regression(gouvRecords)
                         
-                        var forecast : [Double] = []
+                        var forecast : [Double?] = []
                         if records.count > 0{
                             for i in 1...records.count {
-                                let fi = Double(i)
-                                let v  = alfaForecast * exp(betaForecast * fi)
-                                forecast.append(v)
+                                if i < start {
+                                    forecast.append(nil)
+                                }else{
+                                    let fi = Double(i - start)
+                                    let v  = alfaForecast * exp(betaForecast * fi)
+                                    forecast.append(v)
+                                }
                                 
                             }
                             
@@ -309,18 +352,13 @@ struct CovidController: RouteCollection {
             }
         }
         
-        // Compute averages
-        
-        if lnCases[0].y > lnCases.last!.y {
-            print("xx")
-        }
         let n = Double(lnCases.count)
         
-         let Σxy = lnCases.reduce(0.0){$0 + ($1.x * $1.y)}
+        let Σxy = lnCases.reduce(0.0){$0 + ($1.x * $1.y)}
         let Σx = lnCases.reduce(0.0){$0 + ($1.x)}
         let Σy = lnCases.reduce(0.0){$0 + ($1.y)}
         let Σx2 = lnCases.reduce(0.0){$0 + ($1.x * $1.x)}
-        let Σy2 = lnCases.reduce(0.0){$0 + ($1.y * $1.y)}
+//        let Σy2 = lnCases.reduce(0.0){$0 + ($1.y * $1.y)}
 
         let β = (n * Σxy -  Σx * Σy) / (n * Σx2 - Σx * Σx)
         let 𝛼 = (Σy - β * Σx) / n
