@@ -10,7 +10,7 @@ public func configure(_ app: Application) throws {
     
     if app.environment.isRelease {
            app.http.server.configuration.hostname = "185.228.173.50"
-           app.http.server.configuration.port = 80
+           app.http.server.configuration.port = 8000
     } else {
         app.http.server.configuration.hostname = Environment.get("app.http.server.configuration.hostname") ?? "192.168.1.21"
         app.http.server.configuration.port =  Int(Environment.get("app.http.server.configuration.port") ?? "8080") ?? 8080
