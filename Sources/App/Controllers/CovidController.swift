@@ -12,6 +12,7 @@ struct CovidController: RouteCollection {
         var acumulat : Bool
         var filter : String?
         var comparar : String?
+        var escalar : Bool
     }
     
     struct ResumContent : Content {
@@ -106,7 +107,6 @@ struct CovidController: RouteCollection {
         guard let compararId = data.comparar else {
             return req.eventLoop.makeFailedFuture(Abort(.badRequest))
         }
-
         
         var from = Date.from(string: data.from ?? "") ?? Date.from(string: "01/01/20")!
         var to = Date.from(string: data.to ?? "") ?? Date()
@@ -165,6 +165,14 @@ struct CovidController: RouteCollection {
 
                                 }
                             }
+                        }
+                        
+                        if data.escalar && ((country.population ?? 0.0) > 0.0){
+                           for i in 0..<records.count {
+                                      
+                            records[i].cases = records[i].cases / (country.population ?? 0.0) * 1000000.0
+                            records[i].deaths = records[i].deaths / (country.population ?? 0.0) * 1000000.0
+                           }
                         }
                         
                         var iMax = 0
@@ -332,6 +340,35 @@ struct CovidController: RouteCollection {
                                 .sort(\.$day)
                                 .all()
                                 .flatMap{ compararRecords in
+                                    
+                                    
+                                    if filter > 0 {
+                                         for i in 0..<compararRecords.count {
+                                         
+                                             if !(i < filter || i >= (compararRecords.count - filter)){
+
+                                                 var cases = 0.0
+                                                 var deaths = 0.0
+                                                 for j in i-filter..<i+filter {
+                                                     cases += compararRecords[j].cases
+                                                     deaths += compararRecords[j].deaths
+                                                 }
+                                                 
+                                                 compararRecords[i].cases = cases / ((2.0 * Double(filter)) )
+                                                 compararRecords[i].deaths = deaths / ((2.0 * Double(filter)))
+
+                                             }
+                                         }
+                                     }
+
+                                    if data.escalar && ((country1.population ?? 0.0) > 0.0){
+                                       for i in 0..<compararRecords.count {
+                                                  
+                                        compararRecords[i].cases = compararRecords[i].cases / (country1.population ?? 0.0) * 1000000.0
+                                        compararRecords[i].deaths = compararRecords[i].deaths / (country1.population ?? 0.0) * 1000000.0
+                                       }
+                                    }
+
                                     
                                     var comparar = compararRecords.map{ $0.cases }
                                     

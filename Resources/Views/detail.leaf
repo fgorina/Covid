@@ -56,8 +56,7 @@
                         yAxisId: 'A',
                         data: cases,
                         borderColor: 'rgba(0, 255, 0, 1.0)',
-                        showLine: false,
-                        
+                        borderWidth: 1.0,
                     },
                      {
                         label: 'Morts',
@@ -150,30 +149,25 @@
                 myChart.data.datasets = [{
                     label: 'Casos',
                     yAxisID: 'A',
-
+                    borderWidth: 1.0,
                     data: cases,
                     borderColor: 'rgba(0, 255, 0, 1.0)',
-                    showLine: false,
-                    
+
                 },
                 {
                     label: 'Morts',
                     yAxisID: 'A',
                     showLine: false,
-
                     data: deaths,
                     borderColor: 'rgba(255, 0, 0, 1.0)',
                 },
-                           
-                            
+                                                       
                    {
                        label: 'Inicial',
                        yAxisID: 'A',
-
                        data: forecast,
                        borderColor: 'rgba(0, 255, 255, 1.0)',
                         pointRadius: 0,
-
                    },
                                          
                  {
@@ -253,6 +247,7 @@
         
         var acumulat = $("\#acumulatId").is(":checked")
         var filter = $("\#filterId").val()
+        var escalar = $("\#escalarId").is(":checked")
 
         var values = {"geoid": geoid,
             "from": desde,
@@ -260,6 +255,7 @@
             "acumulat":acumulat,
             "filter": filter,
             "comparar" : comparar,
+            "escalar" : escalar,
         }
         var jqxhr =
         $.ajax({
@@ -312,6 +308,7 @@
         $("\#desdeId").change(function(){loadSelected()})
         $("\#hastaId").change(function(){loadSelected()})
         $("\#acumulatId").change(function(){loadSelected()})
+        $("\#escalarId").change(function(){loadSelected()})
 
     });
             
@@ -336,7 +333,7 @@
         </select>
         &nbsp;Acumulat&nbsp;
         <input name="acumulat" id="acumulatId" type="checkbox">
-         &nbsp;Acumulat&nbsp;
+         &nbsp;Filtre&nbsp;
         <select name="filter" id="filterId" onChange="loadSelected()">
             <option value="0" >Sense Filtre</option>
             <option value="1" >1</option>
@@ -363,6 +360,11 @@
             value="#(item.geoId)" >#(item.descripcio)</option>
         #endfor
     </select>
+
+    &nbsp;Casos/1Mh&nbsp;
+    <input name="escalar" id="escalarId" type="checkbox">
+     
+
 
        
     <div class="spacer"> </div>𝛼:&nbsp;<div id="idAlfa" class="inline"></div>&nbsp;/&nbsp;𝛽:&nbsp;<div id="idBeta" class="inline"></div>
