@@ -61,8 +61,7 @@
                      {
                         label: 'Morts',
                         yAxisID: 'A',
-                        showLine: false,
-
+                        borderWidth: 1.0,
                         data: deaths,
                         borderColor: 'rgba(255, 0, 0, 1.0)',
                     },
@@ -157,7 +156,7 @@
                 {
                     label: 'Morts',
                     yAxisID: 'A',
-                    showLine: false,
+                    borderWidth: 1.0,
                     data: deaths,
                     borderColor: 'rgba(255, 0, 0, 1.0)',
                 },
@@ -248,6 +247,7 @@
         var acumulat = $("\#acumulatId").is(":checked")
         var filter = $("\#filterId").val()
         var escalar = $("\#escalarId").is(":checked")
+        var serie = $("\#serieId").val()
 
         var values = {"geoid": geoid,
             "from": desde,
@@ -256,6 +256,7 @@
             "filter": filter,
             "comparar" : comparar,
             "escalar" : escalar,
+            "serie" : serie,
         }
         var jqxhr =
         $.ajax({
@@ -353,7 +354,7 @@
         <b>Al</b>&nbsp;<input id="hastaId" name="to" type="date">
     </div>
         <div class="opener">
-    Comparar
+Comparar País&nbsp;
     <select name="paisos2" id="paisos2Id" onChange="loadSelected()">
         #for(item in countries):
             <option #if(item.geoId == geoid): selected="selected" #endif
@@ -361,11 +362,15 @@
         #endfor
     </select>
 
+
+     &nbsp;Sèrie
+     <select name="serie" id="serieId" onChange="loadSelected()">
+            <option value= 0 >Casos</option>
+            <option value= 1 >Morts</option>
+    </select>
+
     &nbsp;Casos/1Mh&nbsp;
     <input name="escalar" id="escalarId" type="checkbox">
-     
-
-
        
     <div class="spacer"> </div>𝛼:&nbsp;<div id="idAlfa" class="inline"></div>&nbsp;/&nbsp;𝛽:&nbsp;<div id="idBeta" class="inline"></div>
         </div>

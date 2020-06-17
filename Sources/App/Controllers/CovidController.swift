@@ -13,6 +13,7 @@ struct CovidController: RouteCollection {
         var filter : String?
         var comparar : String?
         var escalar : Bool
+        var serie : String
     }
     
     struct ResumContent : Content {
@@ -130,6 +131,9 @@ struct CovidController: RouteCollection {
         filter = max(filter, 0)
         filter = min(filter, 8)
         
+        let serie = Int(data.serie)
+
+        
         return CountriesModel.query(on: req.db)
             .filter(\.$geoid == geoId)
             .first()
@@ -167,13 +171,6 @@ struct CovidController: RouteCollection {
                             }
                         }
                         
-                        if data.escalar && ((country.population ?? 0.0) > 0.0){
-                           for i in 0..<records.count {
-                                      
-                            records[i].cases = records[i].cases / (country.population ?? 0.0) * 1000000.0
-                            records[i].deaths = records[i].deaths / (country.population ?? 0.0) * 1000000.0
-                           }
-                        }
                         
                         var iMax = 0
                         var i400 = 0
@@ -195,6 +192,15 @@ struct CovidController: RouteCollection {
                         if i400 == 0{
                             i400 = records.count-1
                         }
+                        
+                        if data.escalar && ((country.population ?? 0.0) > 0.0){
+                           for i in 0..<records.count {
+                                      
+                            records[i].cases = records[i].cases / (country.population ?? 0.0) * 1000000.0
+                            records[i].deaths = records[i].deaths / (country.population ?? 0.0) * 1000000.0
+                           }
+                        }
+
                           
                         if data.acumulat {
                             
@@ -370,7 +376,7 @@ struct CovidController: RouteCollection {
                                     }
 
                                     
-                                    var comparar = compararRecords.map{ $0.cases }
+                                    var comparar = compararRecords.map{ (serie == 1) ? $0.deaths : $0.cases }
                                     
                                     var acum = 0.0
                                     if data.acumulat {
