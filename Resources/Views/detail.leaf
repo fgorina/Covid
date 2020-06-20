@@ -62,7 +62,7 @@
                                    borderColor: 'rgba(255, 0, 0, 1.0)',
                                },
                                {
-                                  label: 'Morts Excessives',
+                                  label: 'Excess def. NYT',
                                   yAxisID: 'A',
                                    showLine: true,
                                   borderWidth: 1.0,

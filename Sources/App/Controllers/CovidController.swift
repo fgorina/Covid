@@ -69,8 +69,9 @@ struct CovidController: RouteCollection {
                     aux.append(CountryId(geoId: $1.geoid, descripcio: $1.description.replacingOccurrences(of: "_", with: " ")))
                     return aux
                 }
+        
                 
-                return req.view.render("detail", DetailContent(geoid: codedCountries[0].geoId  , descripcio: codedCountries[0].descripcio.replacingOccurrences(of: "_", with: " "), list: [], adjusted: [], alfa: 0.0, beta:0.0, countries: codedCountries, forecast: [], alfaForecast: 0.0, betaForecast: 0.0, movingBeta: [],comparar: [], excessDeaths: []))
+                return req.view.render("detail", DetailContent(geoid: "ES"  , descripcio: "Spain".replacingOccurrences(of: "_", with: " "), list: [], adjusted: [], alfa: 0.0, beta:0.0, countries: codedCountries, forecast: [], alfaForecast: 0.0, betaForecast: 0.0, movingBeta: [], comparar: [], excessDeaths: []))
         }
     }
     
@@ -110,7 +111,7 @@ struct CovidController: RouteCollection {
             return req.eventLoop.makeFailedFuture(Abort(.badRequest))
         }
         
-        var from = Date.from(string: data.from ?? "") ?? Date.from(string: "01/01/20")!
+        var from = Date.from(string: data.from ?? "") ?? Date.from(string: "01/02/20")!
         var to = Date.from(string: data.to ?? "") ?? Date()
         
         if to < from {
