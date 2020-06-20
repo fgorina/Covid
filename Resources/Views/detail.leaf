@@ -45,199 +45,121 @@
 
             
             var ctx = $('\#myChart')[0];
+            var data = {
+                               labels: labels,
+                               datasets: [{
+                                   label: 'Casos',
+                                   yAxisId: 'A',
+                                   data: cases,
+                                   borderColor: 'rgba(0, 255, 0, 1.0)',
+                                   borderWidth: 1.0,
+                               },
+                                {
+                                   label: 'Morts',
+                                   yAxisID: 'A',
+                                   borderWidth: 1.0,
+                                   data: deaths,
+                                   borderColor: 'rgba(255, 0, 0, 1.0)',
+                               },
+                               {
+                                  label: 'Morts Excessives',
+                                  yAxisID: 'A',
+                                   showLine: true,
+                                  borderWidth: 1.0,
+                                  data: data.excessDeaths,
+                               spanGaps: true,
+                                  borderColor: 'rgba(255, 128, 128, 1.0)',
+                              },
+
+                                          
+                                  {
+                                      label: 'Inicial',
+                                      yAxisID: 'A',
+
+                                      data: forecast,
+                                      borderColor: 'rgba(0, 255, 255, 1.0)',
+                                       pointRadius: 0,
+
+                                  },
+                                          
+                                  {
+                                      label: 'Ajust',
+                                      yAxisID: 'A',
+
+                                      data: adjusted,
+                                      borderColor: 'rgba(0, 0, 255, 1.0)',
+                                       pointRadius: 0,
+            
+
+                                  },
+                                  {
+                                      label: 'β Móbil',
+                                      yAxisID: 'B',
+                                      data: data.movingBeta,
+                                      borderColor: 'rgba(255, 255, 0, 1.0)',
+                                       pointRadius: 0,
+                                       pointHitRadius: 3,
+                                      borderWidth: 1.0
+                                  },
+                                  {
+                                    label: data.compararName,
+                                    yAxisID: 'A',
+                                    showLine: true,
+                                   borderWidth : 1.0,
+                                   pointRadius : 0,
+                                    pointHitRadius: 3,
+                                   data: data.comparar,
+                                    borderColor: 'rgba(255, 0, 255, 1.0)',
+                                  },
+
+
+                               ]
+                           }
+            
+            options = {
+                title: {
+                    display: true,
+                    text: data.descripcio,
+                },
+                
+                maintainAspectRatio: false,
+                events: ['click'],
+                scales: {
+                    xAxes: [{
+                        stacked: true,
+                    }],
+                    yAxes: [{
+                        id: 'A',
+                        type: eix,
+                        stacked: false,
+                        ticks: {
+                            beginAtZero: true
+                        }
+                    },
+                    {
+                        id: 'B',
+                        type: 'linear',
+                        position: 'right',
+                        stacked: false,
+                        ticks: {
+                             beginAtZero: true
+                        }
+                    }]
+                }
+            }
             
             if (myChart == null){
             myChart = new Chart(ctx, {
+                
                 type: 'line',
-                data: {
-                    labels: labels,
-                    datasets: [{
-                        label: 'Casos',
-                        yAxisId: 'A',
-                        data: cases,
-                        borderColor: 'rgba(0, 255, 0, 1.0)',
-                        borderWidth: 1.0,
-                    },
-                     {
-                        label: 'Morts',
-                        yAxisID: 'A',
-                        borderWidth: 1.0,
-                        data: deaths,
-                        borderColor: 'rgba(255, 0, 0, 1.0)',
-                    },
-                               
-                       {
-                           label: 'Inicial',
-                           yAxisID: 'A',
-
-                           data: forecast,
-                           borderColor: 'rgba(0, 255, 255, 1.0)',
-                            pointRadius: 0,
-
-                       },
-                               
-                       {
-                           label: 'Ajust',
-                           yAxisID: 'A',
-
-                           data: adjusted,
-                           borderColor: 'rgba(0, 0, 255, 1.0)',
-                            pointRadius: 0,
- 
-
-                       },
-                       {
-                           label: 'β Móbil',
-                           yAxisID: 'B',
-                           data: data.movingBeta,
-                           borderColor: 'rgba(255, 255, 0, 1.0)',
-                            pointRadius: 0,
-                            pointHitRadius: 3,
-                           borderWidth: 1.0
-                       },
-                       {
-                         label: data.compararName,
-                         yAxisID: 'A',
-                         showLine: true,
-                        borderWidth : 1.0,
-                        pointRadius : 0,
-                         pointHitRadius: 3,
-                        data: data.comparar,
-                         borderColor: 'rgba(255, 0, 255, 1.0)',
-                       },
-
-
-                    ]
-                },
-                options: {
-                    title: {
-                        display: true,
-                        text: data.descripcio,
-                    },
-                    
-                    maintainAspectRatio: false,
-                    events: ['click'],
-                    scales: {
-                        xAxes: [{
-                            stacked: true,
-                        }],
-                        yAxes: [{
-                            id: 'A',
-                            type: eix,
-                            stacked: false,
-                            ticks: {
-                                beginAtZero: true
-                            }
-                        },
-                        {
-                            id: 'B',
-                            type: 'linear',
-                            position: 'right',
-                            stacked: false,
-                            ticks: {
-                                 beginAtZero: true
-                            }
-                        }]
-                    }
-                }
+                data: data,
+                options: options
             }
             );
             }else {
-                
-                myChart.data.labels = labels
-                myChart.data.datasets = [{
-                    label: 'Casos',
-                    yAxisID: 'A',
-                    borderWidth: 1.0,
-                    data: cases,
-                    borderColor: 'rgba(0, 255, 0, 1.0)',
-
-                },
-                {
-                    label: 'Morts',
-                    yAxisID: 'A',
-                    borderWidth: 1.0,
-                    data: deaths,
-                    borderColor: 'rgba(255, 0, 0, 1.0)',
-                },
-                                                       
-                   {
-                       label: 'Inicial',
-                       yAxisID: 'A',
-                       data: forecast,
-                       borderColor: 'rgba(0, 255, 255, 1.0)',
-                        pointRadius: 0,
-                   },
-                                         
-                 {
-                      label: 'Ajust',
-                      yAxisID: 'A',
-
-                      data: adjusted,
-                      borderColor: 'rgba(0, 0, 255, 1.0)',
-                     pointRadius: 0,
-
-                  },
-                  {
-                      label: 'β Móbil',
-                      yAxisID: 'B',
-                      data: data.movingBeta,
-                      borderColor: 'rgba(255, 255, 0, 1.0)',
-                      borderWidth: 1.0,
-                        pointRadius: 0,
-                    pointHitRadius: 3,
-
-
-                  },
-                 {
-                     label: data.compararName,
-                     yAxisID: 'A',
-                     showLine: true,
-                    borderWidth : 1.0,
-                    pointRadius : 0,
-                     pointHitRadius: 3,
-                    data: data.comparar,
-                     borderColor: 'rgba(255, 0, 255, 1.0)',
-                 },
-
-                                         
-                ]
-                
-                myChart.options = {
-                    title: {
-                        display: true,
-                        text: data.descripcio,
-                    },
-                    
-                    maintainAspectRatio: false,
-                    events: ['click'],
-                    scales: {
-                        xAxes: [{
-                            stacked: true,
-                        }],
-                        yAxes: [{
-                            id: 'A',
-                            type: eix,
-                            stacked: false,
-                            ticks: {
-                                beginAtZero: true
-                            }
-                        },
-                        {
-                            id: 'B',
-                            type: 'linear',
-                            position: 'right',
-                            stacked: false,
-                            ticks: {
-                                beginAtZero: true
-                            }
-                        }]
-                    }
-                }
-                
+                myChart.data = data
+                myChart.options = options
                 myChart.update()
-                
-                
             }
             
         }

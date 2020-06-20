@@ -39,6 +39,7 @@ struct CovidController: RouteCollection {
         var movingBeta : [Double?]
         var comparar : [Double?]
         var compararName : String?// 10 últims dies
+        var excessDeaths : [Double?]
     }
     
     func boot(routes: RoutesBuilder) throws {
@@ -69,7 +70,7 @@ struct CovidController: RouteCollection {
                     return aux
                 }
                 
-                return req.view.render("detail", DetailContent(geoid: codedCountries[0].geoId  , descripcio: codedCountries[0].descripcio.replacingOccurrences(of: "_", with: " "), list: [], adjusted: [], alfa: 0.0, beta:0.0, countries: codedCountries, forecast: [], alfaForecast: 0.0, betaForecast: 0.0, movingBeta: [],comparar: []))
+                return req.view.render("detail", DetailContent(geoid: codedCountries[0].geoId  , descripcio: codedCountries[0].descripcio.replacingOccurrences(of: "_", with: " "), list: [], adjusted: [], alfa: 0.0, beta:0.0, countries: codedCountries, forecast: [], alfaForecast: 0.0, betaForecast: 0.0, movingBeta: [],comparar: [], excessDeaths: []))
         }
     }
     
@@ -125,14 +126,14 @@ struct CovidController: RouteCollection {
             if let file = Int(fil){
                 filter = Int(file)
             }
-           
+            
         }
         
         filter = max(filter, 0)
         filter = min(filter, 8)
         
         let serie = Int(data.serie)
-
+        
         
         return CountriesModel.query(on: req.db)
             .filter(\.$geoid == geoId)
@@ -154,9 +155,9 @@ struct CovidController: RouteCollection {
                         // filtering (computes moving average)
                         if filter > 0 {
                             for i in 0..<records.count {
-                            
+                                
                                 if !(i < filter || i >= (records.count - filter)){
-
+                                    
                                     var cases = 0.0
                                     var deaths = 0.0
                                     for j in i-filter..<i+filter {
@@ -166,7 +167,7 @@ struct CovidController: RouteCollection {
                                     
                                     records[i].cases = cases / ((2.0 * Double(filter)) )
                                     records[i].deaths = deaths / ((2.0 * Double(filter)))
-
+                                    
                                 }
                             }
                         }
@@ -194,14 +195,14 @@ struct CovidController: RouteCollection {
                         }
                         
                         if data.escalar && ((country.population ?? 0.0) > 0.0){
-                           for i in 0..<records.count {
-                                      
-                            records[i].cases = records[i].cases / (country.population ?? 0.0) * 1000000.0
-                            records[i].deaths = records[i].deaths / (country.population ?? 0.0) * 1000000.0
-                           }
+                            for i in 0..<records.count {
+                                
+                                records[i].cases = records[i].cases / (country.population ?? 0.0) * 1000000.0
+                                records[i].deaths = records[i].deaths / (country.population ?? 0.0) * 1000000.0
+                            }
                         }
-
-                          
+                        
+                        
                         if data.acumulat {
                             
                             var acumCases = 0.0
@@ -215,7 +216,7 @@ struct CovidController: RouteCollection {
                                 record.deaths = acumDeaths
                             }
                         }
-                         
+                        
                         var acc = 0
                         var start = 0
                         
@@ -223,7 +224,7 @@ struct CovidController: RouteCollection {
                             if record.cases > 0.0{
                                 acc += 1
                                 if acc > 3{
-                                     break
+                                    break
                                 }
                             }else{
                                 acc = 0
@@ -234,14 +235,14 @@ struct CovidController: RouteCollection {
                         if start == records.count {
                             start = 0
                         }
-
+                        
                         if i400 < start {
                             i400 = min(start + 10, records.count-1)
                         }
                         if iMax < start {
                             iMax = records.count-1
                         }
-
+                        
                         
                         let adjustableRecords : [Covid19Model] = Array(records[start..<iMax])
                         var (alfa, beta) = self.regression(adjustableRecords)
@@ -330,64 +331,105 @@ struct CovidController: RouteCollection {
                             }
                         }
                         
-                        return CountriesModel.query(on: req.db)
-                        .filter(\.$geoid == compararId)
-                        .first()
-                        .unwrap(or: Abort(.notFound))
-                        .flatMap{ country1 in
-                            
-                            return Covid19Model.query(on: req.db)
-                                .filter(\.$country == country1.id!)
-                                .filter(\.$reportingDate >= from)
-                                .filter(\.$reportingDate <= to)
-                                .filter(\.$cases >= 0.0)
-                                .sort(\.$year)
-                                .sort(\.$month)
-                                .sort(\.$day)
-                                .all()
-                                .flatMap{ compararRecords in
-                                    
-                                    
-                                    if filter > 0 {
-                                         for i in 0..<compararRecords.count {
-                                         
-                                             if !(i < filter || i >= (compararRecords.count - filter)){
-
-                                                 var cases = 0.0
-                                                 var deaths = 0.0
-                                                 for j in i-filter..<i+filter {
-                                                     cases += compararRecords[j].cases
-                                                     deaths += compararRecords[j].deaths
-                                                 }
-                                                 
-                                                 compararRecords[i].cases = cases / ((2.0 * Double(filter)) )
-                                                 compararRecords[i].deaths = deaths / ((2.0 * Double(filter)))
-
-                                             }
-                                         }
-                                     }
-
-                                    if data.escalar && ((country1.population ?? 0.0) > 0.0){
-                                       for i in 0..<compararRecords.count {
-                                                  
-                                        compararRecords[i].cases = compararRecords[i].cases / (country1.population ?? 0.0) * 1000000.0
-                                        compararRecords[i].deaths = compararRecords[i].deaths / (country1.population ?? 0.0) * 1000000.0
-                                       }
-                                    }
-
-                                    
-                                    var comparar = compararRecords.map{ (serie == 1) ? $0.deaths : $0.cases }
-                                    
-                                    var acum = 0.0
+                        return VDeathsNYTModel.query(on: req.db)
+                            .filter(\.$country == country.id!)
+                            .filter(\.$reportingDate >= from)
+                            .filter(\.$reportingDate <= to)
+                            .filter(\.$excessDeaths >= 0.0)
+                            .filter(\.$placename == nil)
+                            .sort(\.$year)
+                            .sort(\.$month)
+                            .sort(\.$week)
+                            .all()
+                            .flatMap { excess in
+                                
+                                
+                                var acumDeaths = 0.0
+                                var excessDeaths : [Double?] = []
+                                
+                                for record in excess {
+                                    acumDeaths += record.excessDeaths
                                     if data.acumulat {
-                                        for i in 0..<comparar.count {
-                                            acum += comparar[i]
-                                            comparar[i] = acum
-                                        }
+                                        record.excessDeaths = acumDeaths
+                                    } else {
+                                        record.excessDeaths = record.excessDeaths / (record.frequency == "weekly" ? 7.0 : 30.0)
                                     }
+                                }
+                                
+                                // Now we must generate correct values for all interpolated points.
+                                
+                                for record in records {
                                     
-                                    return req.eventLoop.makeSucceededFuture(DetailContent(geoid: geoId, descripcio: country.description.replacingOccurrences(of: "_", with: " "), list: records, adjusted: adjusted, alfa: alfa, beta: beta, countries: [], forecast: forecast, alfaForecast: alfaForecast, betaForecast: betaForecast, movingBeta: movingBeta, comparar: comparar, compararName : country1.description))
-                             }
+                                    let items =  excess.filter {
+                                        record.reportingDate == $0.reportingDate
+                                    }
+                                    if let item = items.first{
+                                        excessDeaths.append(item.excessDeaths)
+                                    }else {
+                                        excessDeaths.append(nil)
+                                    }                                      
+                                }
+                                
+                                
+                                return CountriesModel.query(on: req.db)
+                                    .filter(\.$geoid == compararId)
+                                    .first()
+                                    .unwrap(or: Abort(.notFound))
+                                    .flatMap{ country1 in
+                                        
+                                        return Covid19Model.query(on: req.db)
+                                            .filter(\.$country == country1.id!)
+                                            .filter(\.$reportingDate >= from)
+                                            .filter(\.$reportingDate <= to)
+                                            .filter(\.$cases >= 0.0)
+                                            .sort(\.$year)
+                                            .sort(\.$month)
+                                            .sort(\.$day)
+                                            .all()
+                                            .flatMap{ compararRecords in
+                                                
+                                                
+                                                if filter > 0 {
+                                                    for i in 0..<compararRecords.count {
+                                                        
+                                                        if !(i < filter || i >= (compararRecords.count - filter)){
+                                                            
+                                                            var cases = 0.0
+                                                            var deaths = 0.0
+                                                            for j in i-filter..<i+filter {
+                                                                cases += compararRecords[j].cases
+                                                                deaths += compararRecords[j].deaths
+                                                            }
+                                                            
+                                                            compararRecords[i].cases = cases / ((2.0 * Double(filter)) )
+                                                            compararRecords[i].deaths = deaths / ((2.0 * Double(filter)))
+                                                            
+                                                        }
+                                                    }
+                                                }
+                                                
+                                                if data.escalar && ((country1.population ?? 0.0) > 0.0){
+                                                    for i in 0..<compararRecords.count {
+                                                        
+                                                        compararRecords[i].cases = compararRecords[i].cases / (country1.population ?? 0.0) * 1000000.0
+                                                        compararRecords[i].deaths = compararRecords[i].deaths / (country1.population ?? 0.0) * 1000000.0
+                                                    }
+                                                }
+                                                
+                                                
+                                                var comparar = compararRecords.map{ (serie == 1) ? $0.deaths : $0.cases }
+                                                
+                                                var acum = 0.0
+                                                if data.acumulat {
+                                                    for i in 0..<comparar.count {
+                                                        acum += comparar[i]
+                                                        comparar[i] = acum
+                                                    }
+                                                }
+                                                
+                                                return req.eventLoop.makeSucceededFuture(DetailContent(geoid: geoId, descripcio: country.description.replacingOccurrences(of: "_", with: " "), list: records, adjusted: adjusted, alfa: alfa, beta: beta, countries: [], forecast: forecast, alfaForecast: alfaForecast, betaForecast: betaForecast, movingBeta: movingBeta, comparar: comparar, compararName : country1.description, excessDeaths: excessDeaths))
+                                        }
+                                }
                         }
                 }
         }
@@ -420,8 +462,8 @@ struct CovidController: RouteCollection {
         let Σx = lnCases.reduce(0.0){$0 + ($1.x)}
         let Σy = lnCases.reduce(0.0){$0 + ($1.y)}
         let Σx2 = lnCases.reduce(0.0){$0 + ($1.x * $1.x)}
-//        let Σy2 = lnCases.reduce(0.0){$0 + ($1.y * $1.y)}
-
+        //        let Σy2 = lnCases.reduce(0.0){$0 + ($1.y * $1.y)}
+        
         let β = (n * Σxy -  Σx * Σy) / (n * Σx2 - Σx * Σx)
         let 𝛼 = (Σy - β * Σx) / n
         //let β =  (Σxy - Σx * yAvg - Σy * xAvg + n * xAvg * yAvg) / (Σx2 + n * xAvg * xAvg - xAvg * 2 * Σx)
