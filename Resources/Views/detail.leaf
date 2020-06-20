@@ -45,7 +45,7 @@
 
             
             var ctx = $('\#myChart')[0];
-            var data = {
+            var someData = {
                                labels: labels,
                                datasets: [{
                                    label: 'Casos',
@@ -152,12 +152,12 @@
             myChart = new Chart(ctx, {
                 
                 type: 'line',
-                data: data,
+                data: someData,
                 options: options
             }
             );
             }else {
-                myChart.data = data
+                myChart.data = someData
                 myChart.options = options
                 myChart.update()
             }
