@@ -1,0 +1,88 @@
+#extend("index"):
+#export("body"):
+
+<div class="wrapper">
+<H1>Benvinguts a la meva aplicació de tracking del Covid-19</H1>
+
+<div class="text-container"</div>
+<p>
+<p>
+Aquí podeu trovar les últimes dades de l'incidència del Covid-19 segons el 
+<a href="https://www.ecdc.europa.eu/en/publications-data/download-todays-data-geographic-distribution-covid-19-cases-worldwide">European Center for Disease Prevention and Control</a>
+
+i les dades sobre el excés de defuncions recopilades per <a href="https://www.nytimes.com">The New York Times</a> i disponibles a <a href="https://github.com/nytimes/covid-19-data.git">GitHub</a>
+i que es poden consultar a el seu web interactiu <a href="https://www.nytimes.com/interactive/2020/us/coronavirus-us-cases.html">The Coronavirus Outbreak</a>
+
+
+ <p> 
+Aquest lloc no pretén substituir els originals sinó presentar una versió senzilla e interactiva de les dades.
+<p>
+La primera pantalla es la <a href="c/ovid">Galeria Infame</a> a on surten els països amb mes morts respecte a la seva població. 
+Es molt fàcil dir que Itàlia te molts morts però Itàlia te quasi 60,5 milions d'habitants 
+i per exemple Taiwan en te quasi 24 per lo que aquí representem els països tenint en compte aquesta població
+en casos i defuncions per 1.0000.000 d'habitants.
+<p>
+També es molt important tenir en compte que la consideració de una defunció causada per el Covid pot canviar de un
+país a un altre, vull pensar que per causes tècniques i no polítiques i de transparència però tots sabem com van aquestes coses.
+<p>
+Per posar un exemple, Bèlgica es el primer país de mes de 1M d'habitants en morts per el Covid però el seu increment de
+defuncions respecte als anys anteriors es idèntic als morts per Covid declarats.
+<p>
+Per contra, a Espanya l'increment de defuncions es un 158% mes que les morts declarades per causa del Covid.
+<p>
+Es possible que aviat canvi la Galeria Infame a fer servir l'excés de defuncions en comptes de les dades declarades.
+<p>Respecte als casos podem fer consideracions semblants doncs cada país fa servir regles una mica diferents sobre com
+comptar els casos. En principi podeu llegir informació sobre lo que representen al web de la ECDC a on l'origen
+de les dades està ben explicat, però depèn molt de l'esforç que hagi fet el país en fer anàlisis a la població suposadament 
+no simptomàtica i quins son els criteris d'inclusió, si exigeix una analítica positiva o si un conjunt de símptomes també poden ser vàlids.
+<p>
+La segona pantalla es l'analitzador a on podeu jugar amb els dades. Algunes instruccions mínimes :
+
+<menu>
+<li> Pots compara com a molt 2 països i tan sols es poden comparar els casos i les morts.
+<li> Si no entres dates s'entén que van del 01/02/20 endavant.
+<li> Els valors es poden filtrar per eliminar l'efecte de les setmanes. Un valor de filtre de 4 les elimina força.
+<li> Podeu marcar <b>Acumulat</b> per veure les dades acumulades de la primera data seleccionada.
+<li> L'eix vertical pot ser Lineal o Logarítmic
+<li> Tan sols es presenten països de més de 1.000.000 d'habitants.
+<li> El comparador mostra una sola variable de l'altre país, pot ser casos o morts
+<li> Quan comparem es útil marcar el Casos/1M i aleshores veiem els casos i les morts / 1.000.000 d'habitants
+</menu>
+
+Els valors presentats son els següents :
+
+<menu>
+<li> Casos : Els que son a la base de dades del ECDC eliminant els negatius. Encara no crec en curacions milagrosses ni resurreccions.
+<li> Morts : També les del ECDC, eliminant valors negatius.
+<li> Excés def. NYT : Es l'excés de mortalitat respecte als darrers anys.
+<li> Inicial : Un ajust de una exponencial fins que es va arribar als 500 casos/dia. 
+<li> Ajust : Un ajust de una exponencial de la data d'inici al valor màxim de casos
+<li> ß Mòbil : Quin es el valor del coeficient de l'exponencial en grups de 15 dies mòbils. Si es &lt; 0 anem be.
+<li> L'altre país
+</menu>
+<p>
+Fent click a les llegendes es poden eliminar algunes però al recarregar les dades es tornen  a visualitzar.
+<p>
+Canviant les dates es pot visualitzar un zoom per veure quina informació desponien els Governs en un moment del temps determinat. per exemple a 
+Espanya es va començar el tancament el 16/17 de Març. Podem analitzar que va passar de l'1 de Març fins el 16. les línies d'ajust
+s'adapten a les dades seleccionades.
+<p>
+Al Món s'han produït mols <b>experiments</b> amb diversos tipus de mesures, moments d'inici d'aquestes, etc. Alguns exemples diferents als nostre :
+
+<menu>
+<li> Taiwan: El viceprimer ministre es epidemiòleg especialitzat en virologia.
+<li> Corea del Sud (South Corea) : Van pati el SARS i a resultes de un desgraciat accident amb un vaixell el Govern es molt mes responsable dels seus actes.
+<li> Suècia (Sweden) : han fet un enfoc diferent. ja veurem com acaba.
+<li> UK: Veiem el seu inici i com han canviat.
+<li> USA : Encara pujant, a veure que passa. El problema amb USA es que es com sumar tots els estats de Europa. Hi ha llocs especialitzats que 
+donen les dades per estat.
+</menu>
+
+
+<p>
+Esperem que us agradi i us permeti treure algunes conclusions a nivell personal i està per venir lo millor, un <b>What if</b> haguéssim 
+pres les mesures un altre dia?.
+</div>
+</div>
+#endexport
+#endextend

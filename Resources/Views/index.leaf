@@ -32,7 +32,8 @@
         </main>
         
         <div class="footer">
-            Les dades s'actualitzen diàriament del <a href="https://www.ecdc.europa.eu/en/publications-data/download-todays-data-geographic-distribution-covid-19-cases-worldwide">European Centre for Disease Prevention and Control</a> i estàn subjectes a la <a href="https://www.ecdc.europa.eu/en/copyright">política de copyright del ECDC</a>.<br>
+            Les dades s'actualitzen diàriament del <a href="https://www.ecdc.europa.eu/en/publications-data/download-todays-data-geographic-distribution-covid-19-cases-worldwide">European Center for Disease Prevention and Control</a> i estàn subjectes a la <a href="https://www.ecdc.europa.eu/en/copyright">política de copyright del ECDC</a>.<br>
+            Les dades de excés de morts provenen de la recopilació del <a href="https://www.nytimes.com/interactive/2020/us/coronavirus-us-cases.html">The new York Times</a> i son accessibles a <a href="https://github.com/nytimes/covid-19-data"Github</a>.<br>
             L'imatege del virus es de <a href="https://phil.cdc.gov/Details.aspx?pid=23312">CDC/ Alissa Eckert, MS; Dan Higgins, MAMS.</a>
             
         </div>

@@ -117,3 +117,10 @@ form input[type=date]{
 .inline {
     display: inline;
 }
+
+.text-container {
+    position: relative;
+    margin: auto;
+    width: 50vw;
+
+}
