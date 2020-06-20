@@ -348,11 +348,22 @@ struct CovidController: RouteCollection {
                                 var excessDeaths : [Double?] = []
                                 
                                 for record in excess {
+                                    
                                     acumDeaths += record.excessDeaths
                                     if data.acumulat {
-                                        record.excessDeaths = acumDeaths
+                                        if data.escalar {
+                                            record.excessDeaths = acumDeaths / (country.population ?? 0.0) * 1000000.0
+                                        }else {
+                                            record.excessDeaths = acumDeaths
+                                        }
+                                        
                                     } else {
-                                        record.excessDeaths = record.excessDeaths / (record.frequency == "weekly" ? 7.0 : 30.0)
+                                        if data.escalar{
+                                            record.excessDeaths = record.excessDeaths / (record.frequency == "weekly" ? 7.0 : 30.0) / (country.population ?? 0.0) * 1000000.0
+                                        }else {
+                                            record.excessDeaths = record.excessDeaths / (record.frequency == "weekly" ? 7.0 : 30.0)
+                                        }
+                                        
                                     }
                                 }
                                 
