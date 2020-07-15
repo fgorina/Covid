@@ -71,7 +71,7 @@ struct CovidController: RouteCollection {
                 }
         
                 
-                return req.view.render("detail", DetailContent(geoid: "ES"  , descripcio: "Spain".replacingOccurrences(of: "_", with: " "), list: [], adjusted: [], alfa: 0.0, beta:0.0, countries: codedCountries, forecast: [], alfaForecast: 0.0, betaForecast: 0.0, movingBeta: [], comparar: [], excessDeaths: []))
+                return req.view.render("detail", DetailContent(geoid: "CT"  , descripcio: "Catalunya".replacingOccurrences(of: "_", with: " "), list: [], adjusted: [], alfa: 0.0, beta:0.0, countries: codedCountries, forecast: [], alfaForecast: 0.0, betaForecast: 0.0, movingBeta: [], comparar: [], excessDeaths: []))
         }
     }
     
