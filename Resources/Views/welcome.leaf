@@ -3,12 +3,13 @@
 
 <div class="wrapper">
 <H1>Benvinguts a la meva aplicació de tracking del Covid-19</H1>
+<h3>Ara també amb dades sobre Catlaunya</h3>
 
 <div class="text-container"</div>
 <p>
 <p>
 Aquí podeu trovar les últimes dades de l'incidència del Covid-19 segons el 
-<a href="https://www.ecdc.europa.eu/en/publications-data/download-todays-data-geographic-distribution-covid-19-cases-worldwide">European Center for Disease Prevention and Control</a>
+<a href="https://www.ecdc.europa.eu/en/publications-data/download-todays-data-geographic-distribution-covid-19-cases-worldwide">European Center for Disease Prevention and Control</a>, les dades sobre la incidència a Catalunya obtingudes de <a href="https://dev.socrata.com/foundry/analisi.transparenciacatalunya.cat/623z-r97q">Transparència Catalunya</a>
 
 i les dades sobre el excés de defuncions recopilades per <a href="https://www.nytimes.com">The New York Times</a> i disponibles a <a href="https://github.com/nytimes/covid-19-data.git">GitHub</a>
 i que es poden consultar a el seu web interactiu <a href="https://www.nytimes.com/interactive/2020/us/coronavirus-us-cases.html">The Coronavirus Outbreak</a>
@@ -17,7 +18,7 @@ i que es poden consultar a el seu web interactiu <a href="https://www.nytimes.co
  <p> 
 Aquest lloc no pretén substituir els originals sinó presentar una versió senzilla e interactiva de les dades.
 <p>
-La primera pantalla es la <a href="c/ovid">Galeria Infame</a> a on surten els països amb mes morts respecte a la seva població. 
+La primera pantalla es la <a href="covid">Galeria Infame</a> a on surten els països amb mes morts respecte a la seva població.
 Es molt fàcil dir que Itàlia te molts morts però Itàlia te quasi 60,5 milions d'habitants 
 i per exemple Taiwan en te quasi 24 per lo que aquí representem els països tenint en compte aquesta població
 en casos i defuncions per 1.0000.000 d'habitants.
@@ -29,12 +30,11 @@ Per posar un exemple, Bèlgica es el primer país de mes de 1M d'habitants en mo
 defuncions respecte als anys anteriors es idèntic als morts per Covid declarats.
 <p>
 Per contra, a Espanya l'increment de defuncions es un 58% mes que les morts declarades per causa del Covid.
-<p>
-Es possible que aviat canvi la Galeria Infame a fer servir l'excés de defuncions en comptes de les dades declarades.
+<p>Les causes de les diferències poden ser múltiples, incloent-hi els efectes al sistema de salut de cada país de un excés d'afluencia de malalts que limita la capacitat d'atenció a altres malalts.
 <p>Respecte als casos podem fer consideracions semblants doncs cada país fa servir regles una mica diferents sobre com
 comptar els casos. En principi podeu llegir informació sobre lo que representen al web de la ECDC a on l'origen
 de les dades està ben explicat, però depèn molt de l'esforç que hagi fet el país en fer anàlisis a la població suposadament 
-no simptomàtica i quins son els criteris d'inclusió, si exigeix una analítica positiva o si un conjunt de símptomes també poden ser vàlids.
+no simptomàtica i quins son els criteris d'inclusió, si exigeix una analítica positiva o si un conjunt de símptomes també poden ser vàlids. Us recomano vivament legir a les fonts referenciades Que volen dir les dades recollides.
 <p>
 La segona pantalla es l'analitzador a on podeu jugar amb els dades. Algunes instruccions mínimes :
 
@@ -78,7 +78,7 @@ Al Món s'han produït mols <b>experiments</b> amb diversos tipus de mesures, mo
 donen les dades per estat.
 </menu>
 
-
+<p>Actualment moltes mesures de restricció s'han aixecat i podem veure a alguns països rebrots mes o menys localitzats que indiquen la continuada existència del virus a la població.
 <p>
 Esperem que us agradi i us permeti treure algunes conclusions a nivell personal i està per venir lo millor, un <b>What if</b> haguéssim 
 pres les mesures un altre dia?.
