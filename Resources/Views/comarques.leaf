@@ -1,0 +1,309 @@
+#extend("index"):
+#export("body"):
+    <script type="text/javascript">
+        
+        var myChart;
+        
+         
+        function buildDetailChart(data){
+            var labels = []
+            var cases = []
+            var deaths = []
+            var adjusted = []
+            var forecast = []
+            
+            var i = 0
+            
+            var maximum = 0.0
+            var maxIndex = 0
+            var eix = $("\#eixosId").val()
+            
+            data.list.forEach(function(value, index){
+                
+                labels.push(value.month.toFixed(0) + "/" + value.day.toFixed(0)  )
+                cases.push(value.cases)
+                deaths.push(value.deaths)
+                
+                if (value.cases > maximum){
+                    maximum = value.cases
+                    maxIndex = index
+                }
+            })
+            
+            data.adjusted.forEach(function(value, index){
+                if (value <= maximum){
+                    adjusted.push(value)
+                }
+            })
+            
+            
+            data.forecast.forEach(function(value, index){
+                if (value <= maximum){
+                    forecast.push(value)
+                }
+            })
+
+            
+            var ctx = $('\#myChart')[0];
+            var someData = {
+                               labels: labels,
+                               datasets: [{
+                                   label: 'Casos',
+                                   yAxisId: 'A',
+                                   data: cases,
+                                   borderColor: 'rgba(0, 255, 0, 1.0)',
+                                   borderWidth: 1.0,
+                               },
+                                {
+                                   label: 'Morts',
+                                   yAxisID: 'A',
+                                   borderWidth: 1.0,
+                                   data: deaths,
+                                   borderColor: 'rgba(255, 0, 0, 1.0)',
+                               },
+                               {
+                                  label: 'Excess def. NYT',
+                                  yAxisID: 'A',
+                                   showLine: true,
+                                  borderWidth: 1.0,
+                                  data: data.excessDeaths,
+                               spanGaps: true,
+                                  borderColor: 'rgba(255, 128, 128, 1.0)',
+                              },
+
+                                          
+                                  {
+                                      label: 'Inicial',
+                                      yAxisID: 'A',
+
+                                      data: forecast,
+                                      borderColor: 'rgba(0, 255, 255, 1.0)',
+                                       pointRadius: 0,
+
+                                  },
+                                          
+                                  {
+                                      label: 'Ajust',
+                                      yAxisID: 'A',
+
+                                      data: adjusted,
+                                      borderColor: 'rgba(0, 0, 255, 1.0)',
+                                       pointRadius: 0,
+            
+
+                                  },
+                                  {
+                                      label: 'β Móbil',
+                                      yAxisID: 'B',
+                                      data: data.movingBeta,
+                                      borderColor: 'rgba(255, 255, 0, 1.0)',
+                                       pointRadius: 0,
+                                       pointHitRadius: 3,
+                                      borderWidth: 1.0
+                                  },
+                                  {
+                                    label: data.compararName,
+                                    yAxisID: 'A',
+                                    showLine: true,
+                                   borderWidth : 1.0,
+                                   pointRadius : 0,
+                                    pointHitRadius: 3,
+                                   data: data.comparar,
+                                    borderColor: 'rgba(255, 0, 255, 1.0)',
+                                  },
+
+
+                               ]
+                           }
+            
+            options = {
+                title: {
+                    display: true,
+                    text: data.descripcio,
+                },
+                
+                maintainAspectRatio: false,
+                events: ['click'],
+                scales: {
+                    xAxes: [{
+                        stacked: true,
+                    }],
+                    yAxes: [{
+                        id: 'A',
+                        type: eix,
+                        stacked: false,
+                        ticks: {
+                            beginAtZero: true
+                        }
+                    },
+                    {
+                        id: 'B',
+                        type: 'linear',
+                        position: 'right',
+                        stacked: false,
+                        ticks: {
+                             beginAtZero: true
+                        }
+                    }]
+                }
+            }
+            
+            if (myChart == null){
+            myChart = new Chart(ctx, {
+                
+                type: 'line',
+                data: someData,
+                options: options
+            }
+            );
+            }else {
+                myChart.data = someData
+                myChart.options = options
+                myChart.update()
+            }
+            
+        }
+    
+    function loadCountry(geoid, comparar, desde, hasta){
+        
+        var acumulat = $("\#acumulatId").is(":checked")
+        var filter = $("\#filterId").val()
+        var escalar = $("\#escalarId").is(":checked")
+        var serie = $("\#serieId").val()
+
+        var values = {"geoid": geoid,
+            "from": desde,
+            "to":hasta,
+            "acumulat":acumulat,
+            "filter": filter,
+            "comparar" : comparar,
+            "escalar" : escalar,
+            "serie" : serie,
+        }
+        var jqxhr =
+        $.ajax({
+            type: "POST",
+            cache: false,
+            contentType: "application/json; charset=utf-8",
+            dataType: "json",
+            data: JSON.stringify(values),
+            url: "/covid/tempoCat",
+        })
+        .done(function (data) {
+            
+            buildDetailChart(data)
+            
+            $('\#idAlfa').html(data.alfaForecast.toFixed(3) +" / " + data.alfa.toFixed(3))
+            $('\#idBeta').html(data.betaForecast.toFixed(3) +" / " + data.beta.toFixed(3))
+            
+        })
+        
+        .fail(function (jqXHR, textStatus, errorThrown) {
+            
+            if (errorThrown != "abort") { // Abort fails silently :)
+                alert("Error at lookup" + textStatus + " " + errorThrown);
+            }
+            
+        })
+        .always(function () {
+            $('body').removeClass('waiting');
+        });
+        
+    }
+    
+    function loadSelected(){
+        let geoid = $("\#paisosId").val()
+        let desde = $("\#desdeId").val()
+        let hasta = $("\#hastaId").val()
+        let comparar = $("\#paisos2Id").val()
+
+        loadCountry(geoid,comparar,desde, hasta)
+        
+    }
+    $(document).ready(function() {
+        let geoid = $("\#paisosId").val()
+        let desde = $("\#desdeId").val()
+        let hasta = $("\#hastaId").val()
+        let comparar = $("\#paisos2Id").val()
+
+
+        loadCountry(geoid,comparar,desde, hasta)
+        $("\#desdeId").change(function(){loadSelected()})
+        $("\#hastaId").change(function(){loadSelected()})
+        $("\#acumulatId").change(function(){loadSelected()})
+        $("\#escalarId").change(function(){loadSelected()})
+
+    });
+            
+</script>
+<h1>Evolució Covid-19</h1>
+<div class="wrapper">
+    <form>
+        <div class="opener">
+        País&nbsp;
+        <select name="paisos" id="paisosId" onChange="loadSelected()">
+            #for(item in countries):
+            <option #if(item.geoId == geoid): selected="selected" #endif
+                value="#(item.geoId)" >#(item.descripcio)</option>
+            #endfor
+        </select>
+        &nbsp;
+        Eix&nbsp;
+        <select name="eixos" id="eixosId" onChange="loadSelected()">
+            <option value="linear" >Lineal</option>
+            <option value="logarithmic" >Logaritmic</option>
+
+        </select>
+        &nbsp;Acumulat&nbsp;
+        <input name="acumulat" id="acumulatId" type="checkbox">
+         &nbsp;Filtre&nbsp;
+        <select name="filter" id="filterId" onChange="loadSelected()">
+            <option value="0" >Sense Filtre</option>
+            <option value="1" >1</option>
+            <option value="2" >2</option>
+            <option value="3" >3</option>
+            <option value="4" >4</option>
+            <option value="5" >5</option>
+            <option value="6" >6</option>
+            <option value="7" >7</option>
+            <option value="8" >8</option>
+
+        </select>
+            
+        <div class="spacer"> </div>
+        <b>Del</b>&nbsp;<input id="desdeId" name="from" type="date">
+            &nbsp;
+        <b>Al</b>&nbsp;<input id="hastaId" name="to" type="date">
+    </div>
+        <div class="opener">
+Comparar País&nbsp;
+    <select name="paisos2" id="paisos2Id" onChange="loadSelected()">
+        #for(item in countries):
+            <option #if(item.geoId == geoid): selected="selected" #endif
+            value="#(item.geoId)" >#(item.descripcio)</option>
+        #endfor
+    </select>
+
+
+     &nbsp;Sèrie
+     <select name="serie" id="serieId" onChange="loadSelected()">
+            <option value= 0 >Casos</option>
+            <option value= 1 >Morts</option>
+    </select>
+
+    &nbsp;Casos/1Mh&nbsp;
+    <input name="escalar" id="escalarId" type="checkbox">
+       
+    <div class="spacer"> </div>𝛼:&nbsp;<div id="idAlfa" class="inline"></div>&nbsp;/&nbsp;𝛽:&nbsp;<div id="idBeta" class="inline"></div>
+        </div>
+
+    </form>
+
+    &nbsp;
+    <div class="chart-container">
+        <canvas id="myChart"></canvas>
+    </div>
+</div>
+     #endexport
+#endextend
+

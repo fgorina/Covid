@@ -25,7 +25,7 @@
             </nav>
         </header>
 
-        <mahttp://gorina.net:8000/covid/detailin>
+        <main>
             <div id="main-content">
                 #import("body")
             </div>
