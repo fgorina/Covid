@@ -4,7 +4,8 @@
         
         var myChart;
         
-         
+        // comment
+
         function buildDetailChart(data){
             var labels = []
             var cases = []
@@ -20,7 +21,7 @@
             
             data.list.forEach(function(value, index){
                 
-                labels.push(value.month.toFixed(0) + "/" + value.day.toFixed(0)  )
+                labels.push(value.reportingDate.substring(5,9) )
                 cases.push(value.cases)
                 deaths.push(value.deaths)
                 

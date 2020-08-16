@@ -483,7 +483,7 @@ struct CovidController: RouteCollection {
         }
     }
     
-    /// Retorna dades de la taula catsalut (catalunya per comarques). De moment tan sols ppsotoi PCR per no compñicat
+    /// Retorna dades de la taula catsalut (catalunya per comarques). De moment tan sols Positius PCR per no complicar
     
     func tempoCat(req: Request )-> EventLoopFuture<DetailContentCatsalut> {
         
