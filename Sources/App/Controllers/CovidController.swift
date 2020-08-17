@@ -515,13 +515,12 @@ struct CovidController: RouteCollection {
             if let file = Int(fil){
                 filter = Int(file)
             }
-            
         }
         
         filter = max(filter, 0)
         filter = min(filter, 8)
         
-        let serie = Int(data.serie)
+        //let serie = Int(data.serie)
         
         
         return ComarquesModel.query(on: req.db)
@@ -783,7 +782,6 @@ struct CovidController: RouteCollection {
                                              .all()
                                             .flatMap{ compararRecords in
                                                 
-                                                
                                                 if filter > 0 {
                                                     for i in 0..<compararRecords.count {
                                                         
@@ -798,7 +796,6 @@ struct CovidController: RouteCollection {
                                                             
                                                             compararRecords[i].cases = cases / ((2.0 * Double(filter)) )
                                                             compararRecords[i].deaths = deaths / ((2.0 * Double(filter)))
-                                                            
                                                         }
                                                     }
                                                 }
@@ -811,8 +808,23 @@ struct CovidController: RouteCollection {
                                                     }
                                                 }
                                                 
+                                                var comparar : [Double] = []
                                                 
-                                                var comparar = compararRecords.map{ (serie == 1) ? $0.deaths : $0.cases }
+                                                for r in records {
+                                                    
+                                                    let target = r.reportingDate
+                                                    
+                                                    if let cr = compararRecords.first(where: {$0.reportingDate == target}){
+                                                        comparar.append(cr.cases)
+                                                    }else {
+                                                        comparar.append(0.0)
+                                                    }
+                                                    
+                                                    
+                                                    
+                                                }
+                                                
+                                                //var comparar = compararRecords.map{ (serie == 1) ? $0.deaths : $0.cases }
                                                 
                                                 var acum = 0.0
                                                 if data.acumulat {

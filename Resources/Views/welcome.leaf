@@ -2,8 +2,8 @@
 #export("body"):
 
 <div class="wrapper">
-<H1>Benvinguts a la meva aplicació de tracking del Covid-19</H1>
-<h3>Ara també amb dades sobre Catlaunya</h3>
+<h1>Benvinguts a la meva aplicació de tracking del Covid-19</H1>
+<h1>Ara també amb dades sobre Catalaunya i per comarques</h1>
 
 <div class="text-container"</div>
 <p>
