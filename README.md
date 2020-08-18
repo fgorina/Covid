@@ -14,8 +14,8 @@ This site has 3 parts:
     
 Data sources are :
 
-    - For countries data is from [ECDC] (https://www.ecdc.europa.eu/en/publications-data/download-todays-data-geographic-distribution-covid-19-cases-worldwide)
+    - For countries data is from [ECDC](https://www.ecdc.europa.eu/en/publications-data/download-todays-data-geographic-distribution-covid-19-cases-worldwide)
     
-    - For Catalonia and Comarques data is from [transparència catalunya - Registre de casos COVID-19 realitzats a Catalunya.] (https://dev.socrata.com/foundry/analisi.transparenciacatalunya.cat/jj6z-iyrp)
+    - For Catalonia and Comarques data is from [transparència catalunya - Registre de casos COVID-19 realitzats a Catalunya.](https://dev.socrata.com/foundry/analisi.transparenciacatalunya.cat/jj6z-iyrp)
     
     
