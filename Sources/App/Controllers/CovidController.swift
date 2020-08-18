@@ -561,7 +561,7 @@ struct CovidController: RouteCollection {
             .unwrap(or: Abort(.notFound))
             .flatMap{ country in
                 
-                let query = buildQuery(serie: serie, comarca: country.id!, from: from, to: to)
+                let query = self.buildQuery(serie: serie, comarca: country.id!, from: from, to: to)
 
                 return (req.db as! SQLDatabase).raw(query)
                     .all()
@@ -624,7 +624,7 @@ struct CovidController: RouteCollection {
                         if data.acumulat {
                             
                             var acumCases = 0.0
-                            var acumDeaths = 0.0
+                            //var acumDeaths = 0.0
                             
                             for record in records {
                                 acumCases += record.cases
@@ -805,7 +805,7 @@ struct CovidController: RouteCollection {
                                     .first()
                                     .unwrap(or: Abort(.notFound))
                                     .flatMap{ country1 in
-                                        let query = buildQuery(serie: serie, comarca: country1.id!, from: from, to: to)
+                                        let query = self.buildQuery(serie: serie, comarca: country1.id!, from: from, to: to)
                                         return (req.db as! SQLDatabase).raw(query)
                                              .all()
                                             .mapEach{
@@ -820,7 +820,7 @@ struct CovidController: RouteCollection {
                                                         if !(i < filter || i >= (compararRecords.count - filter)){
                                                             
                                                             var cases = 0.0
-                                                            var deaths = 0.0
+                                                            //var deaths = 0.0
                                                             for j in i-filter..<i+filter {
                                                                 cases += compararRecords[j].cases
                                                                 //deaths += compararRecords[j].deaths
