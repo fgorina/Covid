@@ -18,6 +18,7 @@ i que es poden consultar a el seu web interactiu <a href="https://www.nytimes.co
  <p> 
 Aquest lloc no pretén substituir els originals sinó presentar una versió senzilla e interactiva de les dades.
 <p>
+<h2>Galeria Infame</h2>
 La primera pantalla es la <a href="covid">Galeria Infame</a> a on surten els països amb mes morts respecte a la seva població.
 Es molt fàcil dir que Itàlia te molts morts però Itàlia te quasi 60,5 milions d'habitants 
 i per exemple Taiwan en te quasi 24 per lo que aquí representem els països tenint en compte aquesta població
@@ -36,6 +37,7 @@ comptar els casos. En principi podeu llegir informació sobre lo que representen
 de les dades està ben explicat, però depèn molt de l'esforç que hagi fet el país en fer anàlisis a la població suposadament 
 no simptomàtica i quins son els criteris d'inclusió, si exigeix una analítica positiva o si un conjunt de símptomes també poden ser vàlids. Us recomano vivament legir a les fonts referenciades Que volen dir les dades recollides.
 <p>
+<h2>Països</h2>
 La segona pantalla es l'analitzador a on podeu jugar amb els dades. Algunes instruccions mínimes :
 
 <menu>
@@ -66,6 +68,15 @@ Fent click a les llegendes es poden eliminar algunes però al recarregar les dad
 Canviant les dates es pot visualitzar un zoom per veure quina informació desponien els Governs en un moment del temps determinat. per exemple a 
 Espanya es va començar el tancament el 16/17 de Març. Podem analitzar que va passar de l'1 de Març fins el 16. les línies d'ajust
 s'adapten a les dades seleccionades.
+<h2>Comarques</h2>
+La tercera pantalla es el desglòs per comarques a Catalunya. Les dades son les submuinistrades per el portal Transparència Catalunya i provenen del registre del Departament de Salut sobre casos positius i sospitosos.
+No hi han dades de morts, però en canvi podeu seleccionar <b>casos positius PCR</b>,
+casos <b>Positius</b> (PCR + Test Ràpid + ELISA) o incloure els <b>Casos Sospitosos</b>. OPer entendre les diferències podeu
+consultar la <a href="https://dev.socrata.com/foundry/analisi.transparenciacatalunya.cat/jj6z-iyrp">descripció de les dades</a>.
+<p>
+la resta funciona com l'analitzador de Països.
+
+
 <p>
 Al Món s'han produït mols <b>experiments</b> amb diversos tipus de mesures, moments d'inici d'aquestes, etc. Alguns exemples diferents als nostre :
 

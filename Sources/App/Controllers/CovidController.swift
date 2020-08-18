@@ -1,6 +1,7 @@
 import Fluent
 import Vapor
 import Leaf
+import SQLKit
 
 struct CovidController: RouteCollection {
     
@@ -485,6 +486,36 @@ struct CovidController: RouteCollection {
     
     /// Retorna dades de la taula catsalut (catalunya per comarques). De moment tan sols Positius PCR per no complicar
     
+    func buildQuery(serie: Int, comarca: Int, from: Date, to: Date) -> SQLQueryString {
+        
+        
+        var queryString = """
+        select min(id), data, codi_comarca, descripcio_comarca, sum(num_casos) casos
+        from catsalut where data >= '\(from.dateString)' and data <= '\(to.dateString)'
+                      and codi_comarca = \(comarca)
+
+        """
+        
+        switch(serie) {
+        
+        case 1:
+            queryString = queryString + " and tipus = 'Positiu PCR' "
+            
+        case 2:
+            queryString = queryString + " and tipus ilike 'Positiu%' "
+        
+        default:
+            queryString = queryString + " and  codi_comarca = \(comarca) "
+            
+        }
+        
+        queryString = queryString + " group by data, codi_comarca, descripcio_comarca order by data"
+        
+        return SQLQueryString(queryString)
+
+        
+    }
+    
     func tempoCat(req: Request )-> EventLoopFuture<DetailContentCatsalut> {
         
         guard let data = try? req.content.decode(TempoData.self)
@@ -520,8 +551,9 @@ struct CovidController: RouteCollection {
         filter = max(filter, 0)
         filter = min(filter, 8)
         
-        //let serie = Int(data.serie)
+        let serie = Int(data.serie)!
         
+
         
         return ComarquesModel.query(on: req.db)
             .filter(\.$id == geoId)
@@ -529,13 +561,13 @@ struct CovidController: RouteCollection {
             .unwrap(or: Abort(.notFound))
             .flatMap{ country in
                 
-                return CatsalutModel.query(on: req.db)
-                    .filter(\.$country == country.id!)
-                    .filter(\.$reportingDate >= from)
-                    .filter(\.$reportingDate <= to)
-                    .filter(\.$cases >= 0.0)
-                    .sort(\.$reportingDate)
+                let query = buildQuery(serie: serie, comarca: country.id!, from: from, to: to)
+
+                return (req.db as! SQLDatabase).raw(query)
                     .all()
+                    .mapEach{
+                        CatsalutModel(grouped: try! $0.decode(model: GroupedCatsalutModel.self))
+                    }
                     .flatMap{ records in
                         
                         // filtering (computes moving average)
@@ -548,11 +580,11 @@ struct CovidController: RouteCollection {
                                     var deaths = 0.0
                                     for j in i-filter..<i+filter {
                                         cases += records[j].cases
-                                        deaths += records[j].deaths
+                                        deaths += 0 //records[j].deaths
                                     }
                                     
                                     records[i].cases = cases / ((2.0 * Double(filter)) )
-                                    records[i].deaths = deaths / ((2.0 * Double(filter)))
+                                    //records[i].deaths = deaths / ((2.0 * Double(filter)))
                                     
                                 }
                             }
@@ -584,7 +616,7 @@ struct CovidController: RouteCollection {
                             for i in 0..<records.count {
                                 
                                 records[i].cases = records[i].cases / (country.population ?? 0.0) * 1000000.0
-                                records[i].deaths = records[i].deaths / (country.population ?? 0.0) * 1000000.0
+                                //records[i].deaths = records[i].deaths / (country.population ?? 0.0) * 1000000.0
                             }
                         }
                         
@@ -596,10 +628,10 @@ struct CovidController: RouteCollection {
                             
                             for record in records {
                                 acumCases += record.cases
-                                acumDeaths += record.deaths
+                                //acumDeaths += record.deaths
                                 
                                 record.cases = acumCases
-                                record.deaths = acumDeaths
+                                //record.deaths = acumDeaths
                             }
                         }
                         
@@ -773,13 +805,13 @@ struct CovidController: RouteCollection {
                                     .first()
                                     .unwrap(or: Abort(.notFound))
                                     .flatMap{ country1 in
-                                        
-                                        return CatsalutModel.query(on: req.db)
-                                            .filter(\.$country == country1.id!)
-                                            .filter(\.$reportingDate >= from)
-                                            .filter(\.$reportingDate <= to)
-                                            .sort(\.$reportingDate)
+                                        let query = buildQuery(serie: serie, comarca: country1.id!, from: from, to: to)
+                                        return (req.db as! SQLDatabase).raw(query)
                                              .all()
+                                            .mapEach{
+                                                CatsalutModel(grouped: try! $0.decode(model: GroupedCatsalutModel.self))
+                                            }
+
                                             .flatMap{ compararRecords in
                                                 
                                                 if filter > 0 {
@@ -791,11 +823,11 @@ struct CovidController: RouteCollection {
                                                             var deaths = 0.0
                                                             for j in i-filter..<i+filter {
                                                                 cases += compararRecords[j].cases
-                                                                deaths += compararRecords[j].deaths
+                                                                //deaths += compararRecords[j].deaths
                                                             }
                                                             
                                                             compararRecords[i].cases = cases / ((2.0 * Double(filter)) )
-                                                            compararRecords[i].deaths = deaths / ((2.0 * Double(filter)))
+                                                            //compararRecords[i].deaths = deaths / ((2.0 * Double(filter)))
                                                         }
                                                     }
                                                 }
@@ -804,7 +836,7 @@ struct CovidController: RouteCollection {
                                                     for i in 0..<compararRecords.count {
                                                         
                                                         compararRecords[i].cases = compararRecords[i].cases / (country1.population ?? 0.0) * 1000000.0
-                                                        compararRecords[i].deaths = compararRecords[i].deaths / (country1.population ?? 0.0) * 1000000.0
+                                                        //compararRecords[i].deaths = compararRecords[i].deaths / (country1.population ?? 0.0) * 1000000.0
                                                     }
                                                 }
                                                 

@@ -273,8 +273,9 @@ Comparar País&nbsp;
 
      &nbsp;Sèrie
      <select name="serie" id="serieId" onChange="loadSelected()">
-            <option value= 0 >Casos</option>
-            <option value= 1 >Morts</option>
+            <option value= 1 >Positius PCR</option>
+            <option value= 2 >Positius</option>
+            <option value= 3 >Positius + Sospitosos</option>
     </select>
 
     &nbsp;Casos/1Mh&nbsp;
