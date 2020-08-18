@@ -490,7 +490,7 @@ struct CovidController: RouteCollection {
         
         
         var queryString = """
-        select min(id), data, codi_comarca, descripcio_comarca, sum(num_casos) casos
+        select data, codi_comarca, descripcio_comarca, sum(num_casos) casos
         from catsalut where data >= '\(from.dateString)' and data <= '\(to.dateString)'
                       and codi_comarca = \(comarca)
 

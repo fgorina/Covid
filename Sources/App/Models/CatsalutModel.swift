@@ -30,7 +30,7 @@ final class CatsalutModel: Model, Content {
     
     init(grouped : GroupedCatsalutModel){
         
-        self.id = grouped.id
+        self.id = -1
         self.reportingDate = grouped.data
         self.country = grouped.codi_comarca
         self.comarca = grouped.descripcio_comarca
@@ -41,21 +41,18 @@ final class CatsalutModel: Model, Content {
     }
 }
 
-final class GroupedCatsalutModel :Model, Content {
+final class GroupedCatsalutModel : Content {
     
     static let schema = "catsalut"
     
-    @ID(custom: .id) var id: Int?
-    @Field(key: "data") var data: Date
-    @Field(key: "codi_comarca") var codi_comarca: Int
-    @Field(key: "descripcio_comarca") var descripcio_comarca: String
-    @Field(key: "casos") var casos: Double
+    var data: Date
+    var codi_comarca: Int
+    var descripcio_comarca: String
+    var casos: Double
     //var deaths: Double = 0.0
 
-    
-    init() { }
-    
-    init(id: Int? = nil,
+     
+    init(
          data: Date,
          codi_comarca: Int,
          descripcio_comarca: String,
