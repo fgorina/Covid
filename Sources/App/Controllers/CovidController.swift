@@ -79,7 +79,7 @@ struct CovidController: RouteCollection {
     
     func detail(req: Request) -> EventLoopFuture<View>{
         return CountriesModel.query(on: req.db)
-            .filter(\.$population > 1000000.0)
+            .filter(\.$population > 500000.0)
             .sort(\.$description)
             .all()
             .flatMap{ countries in
