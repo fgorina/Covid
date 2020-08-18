@@ -18,4 +18,11 @@ Data sources are :
     
     - For Catalonia and Comarques data is from [transparència catalunya - Registre de casos COVID-19 realitzats a Catalunya.](https://dev.socrata.com/foundry/analisi.transparenciacatalunya.cat/jj6z-iyrp)
     
+        Data does not include deaths but it categorizes cases into Positive by PCR, Positive by Fast test and ELISA and just suspect cases. More explanation is in the link for the dataset.
     
+    
+    - For excess deaths data comes from [The New York Times](https://github.com/nytimes/covid-19-data)
+
+This program uses the Vapor framework, chart.js charting javascript and a Postgres database.
+
+Data is loaded daily into the database.
