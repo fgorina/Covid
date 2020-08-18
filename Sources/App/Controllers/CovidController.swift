@@ -488,28 +488,32 @@ struct CovidController: RouteCollection {
     
     func buildQuery(serie: Int, comarca: Int, from: Date, to: Date) -> SQLQueryString {
         
-        
-        var queryString = """
-        select data, codi_comarca, descripcio_comarca, sum(num_casos) casos
-        from catsalut where data >= '\(from.dateString)' and data <= '\(to.dateString)'
-                      and codi_comarca = \(comarca)
-
-        """
-        
+        var tipus = "%"
         switch(serie) {
         
         case 1:
-            queryString = queryString + " and tipus = 'Positiu PCR' "
+            tipus = "Positiu PCR"
             
         case 2:
-            queryString = queryString + " and tipus ilike 'Positiu%' "
+            tipus = "Positiu%"
         
         default:
-            queryString = queryString + " and  codi_comarca = \(comarca) "
+            tipus = "%"
             
         }
-        
-        queryString = queryString + " group by data, codi_comarca, descripcio_comarca order by data"
+
+        let queryString = """
+
+            with dates as (
+                select * from generate_series('\(from.dateString)'::date, '\(to.dateString)'::date, '1 day')  as data
+            )
+            select d.data, sum(coalesce(c.num_casos, 0)) as casos from dates d
+            left join catsalut c on (c.data = d.data
+                    and c.codi_comarca = \(comarca)
+                    and c.tipus ilike '\(tipus)' )
+            group by d.data
+            order by d.data
+        """
         
         return SQLQueryString(queryString)
 
@@ -566,7 +570,7 @@ struct CovidController: RouteCollection {
                 return (req.db as! SQLDatabase).raw(query)
                     .all()
                     .mapEach{
-                        CatsalutModel(grouped: try! $0.decode(model: GroupedCatsalutModel.self))
+                        CatsalutModel(grouped: try! $0.decode(model: GroupedCatsalutModel.self), codiComarca: country.id!, descComarca: country.description )
                     }
                     .flatMap{ records in
                         
@@ -809,7 +813,7 @@ struct CovidController: RouteCollection {
                                         return (req.db as! SQLDatabase).raw(query)
                                              .all()
                                             .mapEach{
-                                                CatsalutModel(grouped: try! $0.decode(model: GroupedCatsalutModel.self))
+                                                CatsalutModel(grouped: try! $0.decode(model: GroupedCatsalutModel.self), codiComarca: country1.id!, descComarca: country1.description )
                                             }
 
                                             .flatMap{ compararRecords in
