@@ -87,12 +87,12 @@ struct CovidController: RouteCollection {
                 
                 let codedCountries : [CountryId] = countries.reduce([]){
                     var aux = $0
-                    aux.append(CountryId(geoId: $1.geoid, descripcio: $1.description.replacingOccurrences(of: "_", with: " ")))
+                    aux.append(CountryId(geoId: $1.geoid, descripcio: $1.description.replacingOccurrences(of: "_", with: " ")) )
                     return aux
                 }
         
                 
-                return req.view.render("detail", DetailContent(geoid: "CT"  , descripcio: "Catalunya".replacingOccurrences(of: "_", with: " "), list: [], adjusted: [], alfa: 0.0, beta:0.0, countries: codedCountries, forecast: [], alfaForecast: 0.0, betaForecast: 0.0, movingBeta: [], comparar: [], excessDeaths: []))
+                return req.view.render("detail", DetailContent(geoid: "CS"  , descripcio: "Catalunya".replacingOccurrences(of: "_", with: " "), list: [], adjusted: [], alfa: 0.0, beta:0.0, countries: codedCountries, forecast: [], alfaForecast: 0.0, betaForecast: 0.0, movingBeta: [], comparar: [], excessDeaths: []))
         }
     }
     
