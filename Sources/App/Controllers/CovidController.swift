@@ -168,7 +168,7 @@ struct CovidController: RouteCollection {
         }
         
         filter = max(filter, 0)
-        filter = min(filter, 8)
+        filter = min(filter, 14)
         
         let serie = Int(data.serie)
         
@@ -194,17 +194,17 @@ struct CovidController: RouteCollection {
                         if filter > 0 {
                             for i in 0..<records.count {
                                 
-                                if !(i < filter || i >= (records.count - filter)){
+                                if !(i < filter){
                                     
                                     var cases = 0.0
                                     var deaths = 0.0
-                                    for j in i-filter..<i+filter {
+                                    for j in i-filter...i {
                                         cases += records[j].cases
                                         deaths += records[j].deaths
                                     }
                                     
-                                    records[i].cases = cases / ((2.0 * Double(filter)) )
-                                    records[i].deaths = deaths / ((2.0 * Double(filter)))
+                                    records[i].cases = cases / Double(filter)
+                                    records[i].deaths = deaths / Double(filter)
                                     
                                 }
                             }
@@ -441,17 +441,17 @@ struct CovidController: RouteCollection {
                                                 if filter > 0 {
                                                     for i in 0..<compararRecords.count {
                                                         
-                                                        if !(i < filter || i >= (compararRecords.count - filter)){
+                                                        if !(i < filter){
                                                             
                                                             var cases = 0.0
                                                             var deaths = 0.0
-                                                            for j in i-filter..<i+filter {
+                                                            for j in i-filter+1...i {
                                                                 cases += compararRecords[j].cases
                                                                 deaths += compararRecords[j].deaths
                                                             }
                                                             
-                                                            compararRecords[i].cases = cases / ((2.0 * Double(filter)) )
-                                                            compararRecords[i].deaths = deaths / ((2.0 * Double(filter)))
+                                                            compararRecords[i].cases = cases / Double(filter)
+                                                            compararRecords[i].deaths = deaths / Double(filter)
                                                             
                                                         }
                                                     }
@@ -582,12 +582,12 @@ struct CovidController: RouteCollection {
                                     
                                     var cases = 0.0
                                     var deaths = 0.0
-                                    for j in i-filter..<i+filter {
+                                    for j in i-filter+1...i {
                                         cases += records[j].cases
                                         deaths += 0 //records[j].deaths
                                     }
                                     
-                                    records[i].cases = cases / ((2.0 * Double(filter)) )
+                                    records[i].cases = cases / Double(filter)
                                     //records[i].deaths = deaths / ((2.0 * Double(filter)))
                                     
                                 }
@@ -825,12 +825,12 @@ struct CovidController: RouteCollection {
                                                             
                                                             var cases = 0.0
                                                             //var deaths = 0.0
-                                                            for j in i-filter..<i+filter {
+                                                            for j in i-filter+1...i {
                                                                 cases += compararRecords[j].cases
                                                                 //deaths += compararRecords[j].deaths
                                                             }
                                                             
-                                                            compararRecords[i].cases = cases / ((2.0 * Double(filter)) )
+                                                            compararRecords[i].cases = cases /  Double(filter)
                                                             //compararRecords[i].deaths = deaths / ((2.0 * Double(filter)))
                                                         }
                                                     }
